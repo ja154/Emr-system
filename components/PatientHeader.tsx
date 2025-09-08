@@ -1,9 +1,10 @@
 import React from 'react';
 import type { Patient } from '../types';
-import { AlertTriangleIcon } from './icons';
+import { AlertTriangleIcon, ChevronLeftIcon } from './icons';
 
 interface PatientHeaderProps {
   patient: Patient;
+  onBack?: () => void;
 }
 
 const calculateAge = (dob: string): number => {
@@ -17,9 +18,19 @@ const calculateAge = (dob: string): number => {
     return age;
 };
 
-const PatientHeader: React.FC<PatientHeaderProps> = ({ patient }) => {
+const PatientHeader: React.FC<PatientHeaderProps> = ({ patient, onBack }) => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-brand-gray-200">
+       {onBack && (
+        <button 
+          onClick={onBack} 
+          className="text-sm font-semibold text-brand-blue hover:underline mb-4 flex items-center gap-1"
+          aria-label="Go back to dashboard"
+        >
+           <ChevronLeftIcon className="w-5 h-5" />
+           Back to Dashboard
+        </button>
+      )}
       <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
         <img
           src={patient.avatarUrl}

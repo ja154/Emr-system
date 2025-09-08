@@ -1,14 +1,3 @@
-export interface Patient {
-  id: string;
-  name: string;
-  dateOfBirth: string;
-  gender: 'Male' | 'Female' | 'Other';
-  nationalId: string;
-  nhifNumber: string;
-  avatarUrl: string;
-  alerts: string[];
-}
-
 export interface Vitals {
   bloodPressure: string;
   heartRate: number;
@@ -45,4 +34,19 @@ export interface AiSummary {
     summary: string;
     keyConcerns: string[];
     suggestedActions: string[];
+}
+
+export interface Patient {
+  id: string;
+  name: string;
+  dateOfBirth: string;
+  gender: 'Male' | 'Female' | 'Other';
+  nationalId: string;
+  nhifNumber: string;
+  avatarUrl: string;
+  alerts: string[];
+  vitals: Vitals;
+  labs: LabResult[];
+  medications: Medication[];
+  notes: ClinicalNote[];
 }

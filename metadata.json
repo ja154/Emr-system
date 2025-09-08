@@ -1,5 +1,5 @@
 {
-  "name": "Kenya EMR Clinical Dashboard",
-  "description": "A modern, AI-assisted Electronic Medical Record (EMR) dashboard designed for Kenyan healthcare professionals. It provides a comprehensive patient overview, including vitals, labs, medications, and AI-generated clinical summaries to support decision-making.",
+  "name": "Kenya EMR Clinical",
+  "description": "A modern, AI-assisted Electronic Medical Record (EMR) designed for Kenyan healthcare professionals. It provides a comprehensive patient overview, including vitals, labs, medications, and AI-generated clinical summaries to support decision-making.",
   "requestFramePermissions": []
 }
