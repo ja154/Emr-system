@@ -10,13 +10,24 @@ export const MOCK_PATIENTS: Patient[] = [
     nhifNumber: 'NHIF-987654',
     avatarUrl: 'https://picsum.photos/seed/patient1/200/200',
     alerts: ['Penicillin Allergy', 'Hypertension'],
-    vitals: {
-      bloodPressure: '145/92',
-      heartRate: 88,
-      temperature: 37.1,
-      respiratoryRate: 18,
-      oxygenSaturation: 97,
-    },
+    vitals: [
+      {
+        date: '2024-08-20T09:00:00Z',
+        bloodPressure: '145/92',
+        heartRate: 88,
+        temperature: 37.1,
+        respiratoryRate: 18,
+        oxygenSaturation: 97,
+      },
+      {
+        date: '2024-08-19T14:30:00Z',
+        bloodPressure: '142/90',
+        heartRate: 85,
+        temperature: 37.0,
+        respiratoryRate: 18,
+        oxygenSaturation: 98,
+      }
+    ],
     labs: [
       { id: 'lab1', testName: 'Hemoglobin A1c', result: '7.8%', referenceRange: '4.0-5.6%', date: '2024-08-15', status: 'Abnormal' },
       { id: 'lab2', testName: 'Creatinine', result: '1.2 mg/dL', referenceRange: '0.6-1.1 mg/dL', date: '2024-08-15', status: 'Abnormal' },
@@ -40,13 +51,16 @@ export const MOCK_PATIENTS: Patient[] = [
     nhifNumber: 'NHIF-123456',
     avatarUrl: 'https://picsum.photos/seed/patient2/200/200',
     alerts: ['Asthma'],
-    vitals: {
-      bloodPressure: '120/80',
-      heartRate: 75,
-      temperature: 36.8,
-      respiratoryRate: 16,
-      oxygenSaturation: 99,
-    },
+    vitals: [
+       {
+        date: '2024-07-01T10:15:00Z',
+        bloodPressure: '120/80',
+        heartRate: 75,
+        temperature: 36.8,
+        respiratoryRate: 16,
+        oxygenSaturation: 99,
+      }
+    ],
     labs: [
        { id: 'lab4', testName: 'Total Cholesterol', result: '190 mg/dL', referenceRange: '<200 mg/dL', date: '2024-07-01', status: 'Normal' },
        { id: 'lab5', testName: 'TSH', result: '2.5 mIU/L', referenceRange: '0.4-4.0 mIU/L', date: '2024-07-01', status: 'Normal' },

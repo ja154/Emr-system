@@ -1,4 +1,5 @@
 export interface Vitals {
+  date: string;
   bloodPressure: string;
   heartRate: number;
   temperature: number;
@@ -23,7 +24,7 @@ export interface Medication {
 }
 
 export interface ClinicalNote {
-  id: string;
+  id:string;
   date: string;
   author: string;
   specialty: string;
@@ -45,7 +46,7 @@ export interface Patient {
   nhifNumber: string;
   avatarUrl: string;
   alerts: string[];
-  vitals: Vitals;
+  vitals: Vitals[];
   labs: LabResult[];
   medications: Medication[];
   notes: ClinicalNote[];

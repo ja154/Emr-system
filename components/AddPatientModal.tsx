@@ -30,7 +30,8 @@ const AddPatientModal: React.FC<AddPatientModalProps> = ({ isOpen, onClose, onAd
       ...formData,
       avatarUrl: `https://picsum.photos/seed/${Date.now()}/200/200`,
       alerts: [],
-      vitals: { bloodPressure: 'N/A', heartRate: 0, temperature: 0, respiratoryRate: 0, oxygenSaturation: 0 },
+      // FIX: The vitals property should be an empty array for a new patient to match the Vitals[] type.
+      vitals: [],
       labs: [],
       medications: [],
       notes: [],

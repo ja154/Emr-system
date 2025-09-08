@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { XIcon } from './icons';
 
 interface ModalProps {
   isOpen: boolean;
@@ -41,10 +42,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
           <h2 className="text-xl font-semibold text-brand-gray-800">{title}</h2>
           <button 
             onClick={onClose} 
-            className="text-brand-gray-400 hover:text-brand-gray-600 text-3xl leading-none font-bold"
+            className="text-brand-gray-400 hover:text-brand-gray-600"
             aria-label="Close modal"
           >
-            &times;
+            <XIcon className="w-6 h-6" />
           </button>
         </div>
         <div className="p-6">

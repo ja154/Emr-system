@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Patient } from './types';
+import type { Patient, Vitals, LabResult, Medication, ClinicalNote } from './types';
 import { MOCK_PATIENTS } from './data';
 import PatientHeader from './components/PatientHeader';
 import VitalsCard from './components/VitalsCard';
@@ -8,6 +8,10 @@ import MedicationsCard from './components/MedicationsCard';
 import ClinicalNotesCard from './components/ClinicalNotesCard';
 import AiSummaryCard from './components/AiSummaryCard';
 import AddPatientModal from './components/AddPatientModal';
+import AddVitalsModal from './components/AddVitalsModal';
+import AddLabResultModal from './components/AddLabResultModal';
+import AddMedicationModal from './components/AddMedicationModal';
+import AddClinicalNoteModal from './components/AddClinicalNoteModal';
 import { StethoscopeIcon, UserPlusIcon, ChevronRightIcon } from './components/icons';
 
 const calculateAge = (dob: string): number => {
@@ -55,7 +59,13 @@ const PatientCard: React.FC<{ patient: Patient; onSelect: () => void }> = ({ pat
 const App: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  
+  // Modal states
   const [isAddPatientModalOpen, setAddPatientModalOpen] = useState(false);
+  const [isAddVitalsModalOpen, setAddVitalsModalOpen] = useState(false);
+  const [isAddLabModalOpen, setAddLabModalOpen] = useState(false);
+  const [isAddMedicationModalOpen, setAddMedicationModalOpen] = useState(false);
+  const [isAddNoteModalOpen, setAddNoteModalOpen] = useState(false);
   
   const handleSelectPatient = (patientId: string) => {
     setSelectedPatientId(patientId);
@@ -65,6 +75,10 @@ const App: React.FC = () => {
     setSelectedPatientId(null);
   };
 
+  const updatePatientData = (patientId: string, updatedData: Partial<Patient>) => {
+    setPatients(prev => prev.map(p => p.id === patientId ? { ...p, ...updatedData } : p));
+  };
+
   const handleAddNewPatient = (newPatientData: Omit<Patient, 'id'>) => {
     const newPatient: Patient = {
         id: `MRN${String(Date.now()).slice(-7)}`,
@@ -72,6 +86,42 @@ const App: React.FC = () => {
     };
     setPatients(prev => [...prev, newPatient]);
   };
+
+  const handleAddVitals = (vitalsData: Omit<Vitals, 'date'>) => {
+    if (!selectedPatientId) return;
+    const newVitals: Vitals = { ...vitalsData, date: new Date().toISOString() };
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { vitals: [...currentPatient.vitals, newVitals] });
+    }
+  }
+
+  const handleAddLabResult = (labData: Omit<LabResult, 'id' | 'date'>) => {
+    if (!selectedPatientId) return;
+    const newLab: LabResult = { ...labData, id: `lab${Date.now()}`, date: new Date().toLocaleDateString('en-CA') };
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { labs: [...currentPatient.labs, newLab] });
+    }
+  }
+
+  const handleAddMedication = (medData: Omit<Medication, 'id'>) => {
+     if (!selectedPatientId) return;
+    const newMed: Medication = { ...medData, id: `med${Date.now()}` };
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { medications: [...currentPatient.medications, newMed] });
+    }
+  }
+
+  const handleAddClinicalNote = (noteData: Omit<ClinicalNote, 'id' | 'date' | 'author'>) => {
+     if (!selectedPatientId) return;
+    const newNote: ClinicalNote = { ...noteData, id: `note${Date.now()}`, date: new Date().toLocaleDateString('en-CA'), author: 'Dr. User' };
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { notes: [newNote, ...currentPatient.notes] });
+    }
+  }
 
   const selectedPatient = patients.find(p => p.id === selectedPatientId);
 
@@ -96,17 +146,17 @@ const App: React.FC = () => {
                     <div className="lg:col-span-3 xl:col-span-3 flex flex-col gap-6">
                         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                             <div className="xl:col-span-1">
-                                <VitalsCard vitals={selectedPatient.vitals} />
+                                <VitalsCard vitals={selectedPatient.vitals} onAdd={() => setAddVitalsModalOpen(true)} />
                             </div>
                             <div className="xl:col-span-2">
-                                <MedicationsCard medications={selectedPatient.medications} />
+                                <MedicationsCard medications={selectedPatient.medications} onAdd={() => setAddMedicationModalOpen(true)} />
                             </div>
                         </div>
                         <div className="grid grid-cols-1">
-                            <RecentLabsCard labs={selectedPatient.labs} />
+                            <RecentLabsCard labs={selectedPatient.labs} onAdd={() => setAddLabModalOpen(true)} />
                         </div>
                         <div className="grid grid-cols-1">
-                            <ClinicalNotesCard notes={selectedPatient.notes} />
+                            <ClinicalNotesCard notes={selectedPatient.notes} onAdd={() => setAddNoteModalOpen(true)} />
                         </div>
                     </div>
                     
@@ -141,6 +191,30 @@ const App: React.FC = () => {
         onClose={() => setAddPatientModalOpen(false)}
         onAddPatient={handleAddNewPatient}
       />
+      {selectedPatient && (
+        <>
+            <AddVitalsModal
+                isOpen={isAddVitalsModalOpen}
+                onClose={() => setAddVitalsModalOpen(false)}
+                onAddVitals={handleAddVitals}
+            />
+            <AddLabResultModal
+                isOpen={isAddLabModalOpen}
+                onClose={() => setAddLabModalOpen(false)}
+                onAddLabResult={handleAddLabResult}
+            />
+            <AddMedicationModal
+                isOpen={isAddMedicationModalOpen}
+                onClose={() => setAddMedicationModalOpen(false)}
+                onAddMedication={handleAddMedication}
+            />
+            <AddClinicalNoteModal
+                isOpen={isAddNoteModalOpen}
+                onClose={() => setAddNoteModalOpen(false)}
+                onAddClinicalNote={handleAddClinicalNote}
+            />
+        </>
+      )}
     </div>
   );
 };
