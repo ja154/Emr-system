@@ -8,22 +8,21 @@ interface VitalsCardProps {
   onAdd: () => void;
 }
 
-const VitalSign: React.FC<{ label: string; value: string | number; unit: string; isAbnormal?: boolean }> = ({ label, value, unit, isAbnormal = false }) => (
-  <div className="flex justify-between items-baseline">
+// A compact version of the VitalSign display for the history list
+const VitalSignCompact: React.FC<{ label: string; value: string | number; unit: string; isAbnormal?: boolean }> = ({ label, value, unit, isAbnormal = false }) => (
+  <div className="flex justify-between items-baseline text-sm">
     <span className="text-brand-gray-600">{label}</span>
-    <span className={`font-bold text-lg ${isAbnormal ? 'text-red-600' : 'text-brand-gray-800'}`}>
-      {value} <span className="text-sm font-normal text-brand-gray-500">{unit}</span>
+    <span className={`font-semibold ${isAbnormal ? 'text-red-600' : 'text-brand-gray-800'}`}>
+      {value} <span className="text-xs font-normal text-brand-gray-500">{unit}</span>
     </span>
   </div>
 );
 
 const VitalsCard: React.FC<VitalsCardProps> = ({ vitals, onAdd }) => {
-  const latestVitals = vitals.length > 0 
-    ? [...vitals].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0] 
-    : null;
-
-  const bpSystolic = latestVitals ? parseInt(latestVitals.bloodPressure.split('/')[0]) : 0;
-  const isBpAbnormal = bpSystolic > 140;
+  // Sort vitals by date descending and take the last 5
+  const recentVitals = vitals.length > 0 
+    ? [...vitals].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5)
+    : [];
 
   const addButton = (
     <button onClick={onAdd} className="p-1 rounded-full text-brand-blue hover:bg-brand-blue-light" aria-label="Add new vitals reading">
@@ -32,20 +31,30 @@ const VitalsCard: React.FC<VitalsCardProps> = ({ vitals, onAdd }) => {
   );
 
   return (
-    <Card title="Vitals" icon={<HeartPulseIcon className="w-6 h-6" />} action={addButton}>
-      {latestVitals ? (
-        <div className="space-y-3">
-          <VitalSign label="BP" value={latestVitals.bloodPressure} unit="mmHg" isAbnormal={isBpAbnormal} />
-          <VitalSign label="Heart Rate" value={latestVitals.heartRate} unit="bpm" />
-          <VitalSign label="Temp" value={latestVitals.temperature} unit="°C" />
-          <VitalSign label="Resp. Rate" value={latestVitals.respiratoryRate} unit="breaths/min" />
-          <VitalSign label="SpO2" value={latestVitals.oxygenSaturation} unit="%" />
-          <p className="text-xs text-brand-gray-400 pt-2 text-right">
-            Last updated: {new Date(latestVitals.date).toLocaleString()}
-          </p>
+    <Card title="Vitals History (Last 5)" icon={<HeartPulseIcon className="w-6 h-6" />} action={addButton}>
+      {recentVitals.length > 0 ? (
+        <div className="space-y-3 max-h-[280px] overflow-y-auto pr-2">
+          {recentVitals.map((vital, index) => {
+            const bpSystolic = parseInt(vital.bloodPressure.split('/')[0]);
+            const isBpAbnormal = bpSystolic > 140 || bpSystolic < 90;
+            return (
+              <div key={index} className="p-3 rounded-lg bg-brand-gray-50 border border-brand-gray-200">
+                <p className="text-xs font-semibold text-brand-gray-700 mb-2 pb-2 border-b border-brand-gray-200">
+                  {new Date(vital.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+                </p>
+                <div className="space-y-1.5">
+                  <VitalSignCompact label="BP" value={vital.bloodPressure} unit="mmHg" isAbnormal={isBpAbnormal} />
+                  <VitalSignCompact label="Heart Rate" value={vital.heartRate} unit="bpm" />
+                  <VitalSignCompact label="Temp" value={vital.temperature} unit="°C" />
+                  <VitalSignCompact label="Resp. Rate" value={vital.respiratoryRate} unit="breaths/min" />
+                  <VitalSignCompact label="SpO2" value={vital.oxygenSaturation} unit="%" />
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
-        <div className="text-center text-brand-gray-500">
+        <div className="text-center text-brand-gray-500 py-10">
           No vitals recorded.
         </div>
       )}
