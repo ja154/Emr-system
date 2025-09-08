@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { LabResult } from '../types';
 import Modal from './Modal';
 
@@ -17,43 +17,69 @@ const AddLabResultModal: React.FC<AddLabResultModalProps> = ({ isOpen, onClose, 
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(initialFormData);
+      setErrors({});
+    }
+  }, [isOpen]);
+
+  const validate = (): boolean => {
+    const newErrors: { [key: string]: string } = {};
+    if (!formData.testName.trim()) newErrors.testName = "Test name is required.";
+    if (!formData.result.trim()) newErrors.result = "Result is required.";
+    if (!formData.referenceRange.trim()) newErrors.referenceRange = "Reference range is required.";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddLabResult(formData);
-    setFormData(initialFormData);
-    onClose();
+    if (validate()) {
+      onAddLabResult(formData);
+      onClose();
+    }
   };
 
-  const inputClass = "mt-1 block w-full px-3 py-2 bg-white border border-brand-gray-300 rounded-md shadow-sm placeholder-brand-gray-400 focus:outline-none focus:ring-brand-blue focus:border-brand-blue sm:text-sm";
+  const baseInputClass = "mt-1 block w-full px-3 py-2 bg-white border border-brand-gray-300 rounded-md shadow-sm placeholder-brand-gray-400 focus:outline-none focus:ring-brand-blue focus:border-brand-blue sm:text-sm";
+  const errorInputClass = "border-red-500 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500";
   
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Add Lab Result">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div>
           <label htmlFor="testName" className="block text-sm font-medium text-brand-gray-700">Test Name</label>
-          <input type="text" name="testName" id="testName" required className={inputClass} onChange={handleChange} value={formData.testName} placeholder="e.g., Hemoglobin A1c" />
+          <input type="text" name="testName" id="testName" required className={`${baseInputClass} ${errors.testName ? errorInputClass : ''}`} onChange={handleChange} value={formData.testName} placeholder="e.g., Hemoglobin A1c" aria-invalid={!!errors.testName} aria-describedby="testName-error"/>
+           {errors.testName && <p id="testName-error" className="mt-1 text-sm text-red-600">{errors.testName}</p>}
         </div>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="result" className="block text-sm font-medium text-brand-gray-700">Result</label>
-            <input type="text" name="result" id="result" required className={inputClass} onChange={handleChange} value={formData.result} placeholder="e.g., 7.8%" />
+            <input type="text" name="result" id="result" required className={`${baseInputClass} ${errors.result ? errorInputClass : ''}`} onChange={handleChange} value={formData.result} placeholder="e.g., 7.8%" aria-invalid={!!errors.result} aria-describedby="result-error" />
+            {errors.result && <p id="result-error" className="mt-1 text-sm text-red-600">{errors.result}</p>}
           </div>
           <div>
             <label htmlFor="referenceRange" className="block text-sm font-medium text-brand-gray-700">Reference Range</label>
-            <input type="text" name="referenceRange" id="referenceRange" required className={inputClass} onChange={handleChange} value={formData.referenceRange} placeholder="e.g., 4.0-5.6%" />
+            <input type="text" name="referenceRange" id="referenceRange" required className={`${baseInputClass} ${errors.referenceRange ? errorInputClass : ''}`} onChange={handleChange} value={formData.referenceRange} placeholder="e.g., 4.0-5.6%" aria-invalid={!!errors.referenceRange} aria-describedby="ref-error" />
+            {errors.referenceRange && <p id="ref-error" className="mt-1 text-sm text-red-600">{errors.referenceRange}</p>}
           </div>
         </div>
 
         <div>
             <label htmlFor="status" className="block text-sm font-medium text-brand-gray-700">Status</label>
-            <select name="status" id="status" required className={inputClass} onChange={handleChange} value={formData.status}>
+            <select name="status" id="status" required className={baseInputClass} onChange={handleChange} value={formData.status}>
                 <option>Normal</option>
                 <option>Abnormal</option>
                 <option>Critical</option>
