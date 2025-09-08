@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import type { LabResult } from '../types';
 import Modal from './Modal';
+import DatePicker from './DatePicker';
 
 interface AddLabResultModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddLabResult: (labResult: Omit<LabResult, 'id' | 'date'>) => void;
+  onAddLabResult: (labResult: Omit<LabResult, 'id'>) => void;
 }
 
 const AddLabResultModal: React.FC<AddLabResultModalProps> = ({ isOpen, onClose, onAddLabResult }) => {
@@ -14,6 +15,7 @@ const AddLabResultModal: React.FC<AddLabResultModalProps> = ({ isOpen, onClose, 
     result: '',
     referenceRange: '',
     status: 'Normal' as LabResult['status'],
+    date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -32,6 +34,12 @@ const AddLabResultModal: React.FC<AddLabResultModalProps> = ({ isOpen, onClose, 
     if (!formData.result.trim()) newErrors.result = "Result is required.";
     if (!formData.referenceRange.trim()) newErrors.referenceRange = "Reference range is required.";
     
+    if (!formData.date) {
+        newErrors.date = "Date is required.";
+    } else if (new Date(formData.date) > new Date()) {
+        newErrors.date = "Date cannot be in the future.";
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -41,6 +49,13 @@ const AddLabResultModal: React.FC<AddLabResultModalProps> = ({ isOpen, onClose, 
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+  
+  const handleDateChange = (date: string) => {
+    setFormData(prev => ({ ...prev, date: date }));
+    if (errors.date) {
+      setErrors(prev => ({ ...prev, date: '' }));
     }
   };
 
@@ -62,6 +77,19 @@ const AddLabResultModal: React.FC<AddLabResultModalProps> = ({ isOpen, onClose, 
           <label htmlFor="testName" className="block text-sm font-medium text-brand-gray-700">Test Name</label>
           <input type="text" name="testName" id="testName" required className={`${baseInputClass} ${errors.testName ? errorInputClass : ''}`} onChange={handleChange} value={formData.testName} placeholder="e.g., Hemoglobin A1c" aria-invalid={!!errors.testName} aria-describedby="testName-error"/>
            {errors.testName && <p id="testName-error" className="mt-1 text-sm text-red-600">{errors.testName}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="date" className="block text-sm font-medium text-brand-gray-700">Date</label>
+          <DatePicker
+            id="date"
+            value={formData.date}
+            onChange={handleDateChange}
+            inputClassName={`${baseInputClass} ${errors.date ? errorInputClass : ''}`}
+            aria-invalid={!!errors.date}
+            aria-describedby="date-error"
+          />
+          {errors.date && <p id="date-error" className="mt-1 text-sm text-red-600">{errors.date}</p>}
         </div>
         
         <div className="grid grid-cols-2 gap-4">

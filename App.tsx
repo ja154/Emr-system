@@ -96,9 +96,9 @@ const App: React.FC = () => {
     }
   }
 
-  const handleAddLabResult = (labData: Omit<LabResult, 'id' | 'date'>) => {
+  const handleAddLabResult = (labData: Omit<LabResult, 'id'>) => {
     if (!selectedPatientId) return;
-    const newLab: LabResult = { ...labData, id: `lab${Date.now()}`, date: new Date().toLocaleDateString('en-CA') };
+    const newLab: LabResult = { ...labData, id: `lab${Date.now()}` };
     const currentPatient = patients.find(p => p.id === selectedPatientId);
     if (currentPatient) {
         updatePatientData(selectedPatientId, { labs: [...currentPatient.labs, newLab] });
@@ -114,9 +114,9 @@ const App: React.FC = () => {
     }
   }
 
-  const handleAddClinicalNote = (noteData: Omit<ClinicalNote, 'id' | 'date' | 'author'>) => {
+  const handleAddClinicalNote = (noteData: Omit<ClinicalNote, 'id' | 'author'>) => {
      if (!selectedPatientId) return;
-    const newNote: ClinicalNote = { ...noteData, id: `note${Date.now()}`, date: new Date().toLocaleDateString('en-CA'), author: 'Dr. User' };
+    const newNote: ClinicalNote = { ...noteData, id: `note${Date.now()}`, author: 'Dr. User' };
     const currentPatient = patients.find(p => p.id === selectedPatientId);
     if (currentPatient) {
         updatePatientData(selectedPatientId, { notes: [newNote, ...currentPatient.notes] });

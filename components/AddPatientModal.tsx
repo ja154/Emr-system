@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Patient } from '../types';
 import Modal from './Modal';
+import DatePicker from './DatePicker';
 
 interface AddPatientModalProps {
   isOpen: boolean;
@@ -20,7 +21,6 @@ const AddPatientModal: React.FC<AddPatientModalProps> = ({ isOpen, onClose, onAd
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   
-  // Reset form state when modal is opened/closed
   useEffect(() => {
     if (isOpen) {
       setFormData(initialFormData);
@@ -57,6 +57,13 @@ const AddPatientModal: React.FC<AddPatientModalProps> = ({ isOpen, onClose, onAd
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
+  
+  const handleDateChange = (date: string) => {
+    setFormData(prev => ({ ...prev, dateOfBirth: date }));
+    if (errors.dateOfBirth) {
+      setErrors(prev => ({ ...prev, dateOfBirth: '' }));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +77,7 @@ const AddPatientModal: React.FC<AddPatientModalProps> = ({ isOpen, onClose, onAd
         medications: [],
         notes: [],
       });
-      onClose(); // Close modal on successful submission
+      onClose();
     }
   };
 
@@ -88,7 +95,14 @@ const AddPatientModal: React.FC<AddPatientModalProps> = ({ isOpen, onClose, onAd
         
         <div>
           <label htmlFor="dateOfBirth" className="block text-sm font-medium text-brand-gray-700">Date of Birth</label>
-          <input type="date" name="dateOfBirth" id="dateOfBirth" required className={`${baseInputClass} ${errors.dateOfBirth ? errorInputClass : ''}`} onChange={handleChange} value={formData.dateOfBirth} aria-invalid={!!errors.dateOfBirth} aria-describedby="dob-error"/>
+          <DatePicker
+            id="dateOfBirth"
+            value={formData.dateOfBirth}
+            onChange={handleDateChange}
+            inputClassName={`${baseInputClass} ${errors.dateOfBirth ? errorInputClass : ''}`}
+            aria-invalid={!!errors.dateOfBirth}
+            aria-describedby="dob-error"
+          />
            {errors.dateOfBirth && <p id="dob-error" className="mt-1 text-sm text-red-600">{errors.dateOfBirth}</p>}
         </div>
 

@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import type { ClinicalNote } from '../types';
 import Modal from './Modal';
+import DatePicker from './DatePicker';
 
 interface AddClinicalNoteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddClinicalNote: (note: Omit<ClinicalNote, 'id' | 'date' | 'author'>) => void;
+  onAddClinicalNote: (note: Omit<ClinicalNote, 'id' | 'author'>) => void;
 }
 
 const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onClose, onAddClinicalNote }) => {
   const initialFormData = {
     specialty: '',
     contentSnippet: '',
+    date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -29,6 +31,12 @@ const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onC
     if (!formData.specialty.trim()) newErrors.specialty = "Specialty is required.";
     if (!formData.contentSnippet.trim()) newErrors.contentSnippet = "Note content cannot be empty.";
     
+    if (!formData.date) {
+        newErrors.date = "Date is required.";
+    } else if (new Date(formData.date) > new Date()) {
+        newErrors.date = "Date cannot be in the future.";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -38,6 +46,13 @@ const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onC
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleDateChange = (date: string) => {
+    setFormData(prev => ({ ...prev, date: date }));
+    if (errors.date) {
+      setErrors(prev => ({ ...prev, date: '' }));
     }
   };
 
@@ -55,10 +70,24 @@ const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onC
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Add Clinical Note">
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        <div>
-          <label htmlFor="specialty" className="block text-sm font-medium text-brand-gray-700">Specialty</label>
-          <input type="text" name="specialty" id="specialty" required className={`${baseInputClass} ${errors.specialty ? errorInputClass : ''}`} onChange={handleChange} value={formData.specialty} placeholder="e.g., Cardiology" aria-invalid={!!errors.specialty} aria-describedby="specialty-error"/>
-           {errors.specialty && <p id="specialty-error" className="mt-1 text-sm text-red-600">{errors.specialty}</p>}
+        <div className="grid grid-cols-2 gap-4">
+            <div>
+                <label htmlFor="specialty" className="block text-sm font-medium text-brand-gray-700">Specialty</label>
+                <input type="text" name="specialty" id="specialty" required className={`${baseInputClass} ${errors.specialty ? errorInputClass : ''}`} onChange={handleChange} value={formData.specialty} placeholder="e.g., Cardiology" aria-invalid={!!errors.specialty} aria-describedby="specialty-error"/>
+                {errors.specialty && <p id="specialty-error" className="mt-1 text-sm text-red-600">{errors.specialty}</p>}
+            </div>
+             <div>
+                <label htmlFor="date" className="block text-sm font-medium text-brand-gray-700">Date</label>
+                <DatePicker
+                    id="date"
+                    value={formData.date}
+                    onChange={handleDateChange}
+                    inputClassName={`${baseInputClass} ${errors.date ? errorInputClass : ''}`}
+                    aria-invalid={!!errors.date}
+                    aria-describedby="date-error"
+                />
+                {errors.date && <p id="date-error" className="mt-1 text-sm text-red-600">{errors.date}</p>}
+            </div>
         </div>
         
         <div>
