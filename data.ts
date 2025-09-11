@@ -34,8 +34,8 @@ export const MOCK_PATIENTS: Patient[] = [
       { id: 'lab3', testName: 'Potassium', result: '4.1 mEq/L', referenceRange: '3.5-5.0 mEq/L', date: '2024-08-15', status: 'Normal' },
     ],
     medications: [
-      { id: 'med1', name: 'Metformin', dosage: '500mg', frequency: 'Twice daily' },
-      { id: 'med2', name: 'Lisinopril', dosage: '10mg', frequency: 'Once daily' },
+      { id: 'med1', name: 'Metformin', dosage: '500mg', frequency: 'Twice daily', duration: 'Ongoing' },
+      { id: 'med2', name: 'Lisinopril', dosage: '10mg', frequency: 'Once daily', duration: 'Ongoing' },
     ],
     notes: [
         { id: 'note1', date: '2024-08-15', author: 'Dr. John Carter', specialty: 'Cardiology', contentSnippet: 'Patient presents for routine follow-up for hypertension and type 2 diabetes. BP remains elevated...' },
@@ -66,7 +66,7 @@ export const MOCK_PATIENTS: Patient[] = [
        { id: 'lab5', testName: 'TSH', result: '2.5 mIU/L', referenceRange: '0.4-4.0 mIU/L', date: '2024-07-01', status: 'Normal' },
     ],
     medications: [
-      { id: 'med3', name: 'Salbutamol Inhaler', dosage: 'As needed', frequency: 'For wheezing' },
+      { id: 'med3', name: 'Salbutamol Inhaler', dosage: 'As needed', frequency: 'For wheezing', duration: 'As needed' },
     ],
     notes: [
         { id: 'note3', date: '2024-07-01', author: 'Dr. Peter Benton', specialty: 'General Practice', contentSnippet: 'Annual physical. Patient reports good control of asthma. Lungs clear to auscultation.' },

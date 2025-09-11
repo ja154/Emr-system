@@ -304,6 +304,7 @@ const App: React.FC = () => {
                 isOpen={isAddMedicationModalOpen}
                 onClose={() => setAddMedicationModalOpen(false)}
                 onAddMedication={handleAddMedication}
+                patientAlerts={selectedPatient.alerts}
             />
             <AddClinicalNoteModal
                 isOpen={isAddNoteModalOpen}

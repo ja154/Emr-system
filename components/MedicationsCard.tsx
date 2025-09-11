@@ -18,19 +18,25 @@ const MedicationsCard: React.FC<MedicationsCardProps> = ({ medications, onAdd })
   return (
     <Card title="Active Medications" icon={<PillIcon className="w-6 h-6" />} action={addButton}>
       {medications.length > 0 ? (
-        <ul className="space-y-3">
+        <ul className="space-y-2">
+            <li className="grid grid-cols-3 items-center px-3 text-xs font-semibold text-brand-gray-500 uppercase">
+                <span className="col-span-1">Name / Dosage</span>
+                <span className="text-center">Frequency</span>
+                <span className="text-right">Duration</span>
+            </li>
           {medications.map((med) => (
-            <li key={med.id} className="flex flex-col sm:flex-row justify-between sm:items-center p-2 rounded-md hover:bg-brand-gray-50">
-              <div>
+            <li key={med.id} className="grid grid-cols-3 items-center p-3 rounded-lg hover:bg-brand-gray-50 text-sm border border-transparent hover:border-brand-gray-200">
+              <div className="col-span-1">
                 <p className="font-semibold text-brand-gray-800">{med.name}</p>
-                <p className="text-sm text-brand-gray-500">{med.dosage}</p>
+                <p className="text-brand-gray-500">{med.dosage}</p>
               </div>
-              <p className="text-sm text-brand-gray-600 mt-1 sm:mt-0">{med.frequency}</p>
+              <p className="text-brand-gray-600 text-center">{med.frequency}</p>
+              <p className="text-brand-gray-600 text-right font-medium">{med.duration}</p>
             </li>
           ))}
         </ul>
       ) : (
-        <div className="text-center text-brand-gray-500">
+        <div className="text-center text-brand-gray-500 py-10">
           No active medications.
         </div>
       )}
