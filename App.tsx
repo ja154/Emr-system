@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Patient, Vitals, LabResult, Medication, ClinicalNote } from './types';
 import { MOCK_PATIENTS } from './data';
 import PatientHeader from './components/PatientHeader';
@@ -13,6 +13,8 @@ import AddLabResultModal from './components/AddLabResultModal';
 import AddMedicationModal from './components/AddMedicationModal';
 import AddClinicalNoteModal from './components/AddClinicalNoteModal';
 import { StethoscopeIcon, UserPlusIcon, ChevronRightIcon } from './components/icons';
+
+const APP_STORAGE_KEY = 'emr_patients_data';
 
 const calculateAge = (dob: string): number => {
     const birthDate = new Date(dob);
@@ -57,7 +59,31 @@ const PatientCard: React.FC<{ patient: Patient; onSelect: () => void }> = ({ pat
 
 
 const App: React.FC = () => {
-  const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
+    const [patients, setPatients] = useState<Patient[]>(() => {
+        try {
+            const localData = localStorage.getItem(APP_STORAGE_KEY);
+            if (localData) {
+                return JSON.parse(localData);
+            }
+            // If no local data, initialize localStorage with mock data
+            localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(MOCK_PATIENTS));
+            return MOCK_PATIENTS;
+        } catch (error) {
+            console.error("Could not read/initialize patients data from localStorage", error);
+            return MOCK_PATIENTS; // Fallback
+        }
+    });
+
+  useEffect(() => {
+    try {
+        // This effect ensures any update to the patients state is persisted.
+        localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(patients));
+    } catch (error) {
+        console.error("Could not save patients data to localStorage", error);
+    }
+  }, [patients]);
+
+
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   
   // Modal states

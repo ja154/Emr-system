@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type { AiSummary } from '../types';
 import { generateClinicalSummary } from '../services/geminiService';
 import Card from './Card';
@@ -8,10 +8,37 @@ interface AiSummaryCardProps {
   patientData: object;
 }
 
+const LOADING_MESSAGES = [
+    "Connecting to AI service...",
+    "Analyzing vitals and lab results...",
+    "Reviewing historical clinical notes...",
+    "Checking for medication interactions...",
+    "Compiling final clinical summary...",
+    "Almost there, finalizing insights...",
+];
+
 const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
   const [summary, setSummary] = useState<AiSummary | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGES[0]);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | undefined;
+    if (isLoading) {
+      setLoadingMessage(LOADING_MESSAGES[0]); // Reset to first message on start
+      let messageIndex = 0;
+      interval = setInterval(() => {
+        messageIndex = (messageIndex + 1) % LOADING_MESSAGES.length;
+        setLoadingMessage(LOADING_MESSAGES[messageIndex]);
+      }, 2000); // Change message every 2 seconds
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isLoading]);
 
   const handleGenerateSummary = useCallback(async () => {
     setIsLoading(true);
@@ -44,7 +71,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <p className="mt-4 text-brand-gray-600 animate-pulse">Analyzing patient data...</p>
+                <p className="mt-4 text-brand-gray-600 text-center">{loadingMessage}</p>
             </div>
         )}
 
