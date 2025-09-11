@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { LabResult } from '../types';
 import Modal from './Modal';
-import DatePicker from './DatePicker';
 
 interface AddLabResultModalProps {
   isOpen: boolean;
@@ -51,13 +50,6 @@ const AddLabResultModal: React.FC<AddLabResultModalProps> = ({ isOpen, onClose, 
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
-  
-  const handleDateChange = (date: string) => {
-    setFormData(prev => ({ ...prev, date: date }));
-    if (errors.date) {
-      setErrors(prev => ({ ...prev, date: '' }));
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,11 +73,13 @@ const AddLabResultModal: React.FC<AddLabResultModalProps> = ({ isOpen, onClose, 
 
         <div>
           <label htmlFor="date" className="block text-sm font-medium text-brand-gray-700">Date</label>
-          <DatePicker
+           <input
+            type="date"
             id="date"
+            name="date"
             value={formData.date}
-            onChange={handleDateChange}
-            inputClassName={`${baseInputClass} ${errors.date ? errorInputClass : ''}`}
+            onChange={handleChange}
+            className={`${baseInputClass} ${errors.date ? errorInputClass : ''}`}
             aria-invalid={!!errors.date}
             aria-describedby="date-error"
           />
