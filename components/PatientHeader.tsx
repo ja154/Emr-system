@@ -20,7 +20,7 @@ const calculateAge = (dob: string): number => {
 
 const PatientHeader: React.FC<PatientHeaderProps> = ({ patient, onBack }) => {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-brand-gray-200">
+    <div>
        {onBack && (
         <button 
           onClick={onBack} 
@@ -31,37 +31,45 @@ const PatientHeader: React.FC<PatientHeaderProps> = ({ patient, onBack }) => {
            Back to Dashboard
         </button>
       )}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
-        <img
-          src={patient.avatarUrl}
-          alt={patient.name}
-          className="w-24 h-24 rounded-full border-4 border-white shadow-md"
-        />
-        <div className="flex-grow">
-          <h1 className="text-3xl font-bold text-brand-gray-900">{patient.name}</h1>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-brand-gray-500 mt-2">
-            <span>DOB: {patient.dateOfBirth} ({calculateAge(patient.dateOfBirth)} years)</span>
-            <span className="hidden sm:inline">|</span>
-            <span>Gender: {patient.gender}</span>
-            <span className="hidden sm:inline">|</span>
-            <span>MRN: {patient.id}</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-brand-gray-500 mt-1">
-             <span>National ID: {patient.nationalId}</span>
-             <span className="hidden sm:inline">|</span>
-             <span>NHIF No: {patient.nhifNumber}</span>
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-brand-gray-200">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+          <img
+            src={patient.avatarUrl}
+            alt={patient.name}
+            className="w-24 h-24 rounded-full border-4 border-white shadow-md flex-shrink-0"
+          />
+          <div className="flex-grow">
+            <h1 className="text-3xl font-bold text-brand-gray-900">{patient.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-brand-gray-500 mt-2 text-sm">
+              <span>DOB: {new Date(patient.dateOfBirth).toLocaleDateString()} ({calculateAge(patient.dateOfBirth)} years)</span>
+              <span className="hidden sm:inline text-brand-gray-300">|</span>
+              <span>Gender: {patient.gender}</span>
+              <span className="hidden sm:inline text-brand-gray-300">|</span>
+              <span>MRN: {patient.id}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-brand-gray-500 mt-1 text-sm">
+               <span>National ID: {patient.nationalId}</span>
+               <span className="hidden sm:inline text-brand-gray-300">|</span>
+               <span>NHIF No: {patient.nhifNumber}</span>
+            </div>
           </div>
         </div>
+        {patient.alerts && patient.alerts.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-brand-gray-200">
+            <h3 className="font-semibold text-sm text-red-800 flex items-center gap-2">
+                <AlertTriangleIcon className="w-5 h-5 text-red-600"/>
+                Active Alerts
+            </h3>
+            <div className="flex flex-wrap gap-2 mt-2">
+                {patient.alerts.map((alert, index) => (
+                    <span key={index} className="px-2.5 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">
+                        {alert}
+                    </span>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
-      {patient.alerts && patient.alerts.length > 0 && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-3">
-          <AlertTriangleIcon className="w-6 h-6 text-red-600 flex-shrink-0" />
-          <div>
-            <h3 className="font-semibold text-red-800">Alerts</h3>
-            <p className="text-red-700">{patient.alerts.join(', ')}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

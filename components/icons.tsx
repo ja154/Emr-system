@@ -128,3 +128,19 @@ export const CalendarIcon: React.FC<IconProps> = (props) => (
         <line x1="3" y1="10" x2="21" y2="10"/>
     </svg>
 );
+
+export const SearchIcon: React.FC<IconProps> = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+);
+
+export const LayoutGridIcon: React.FC<IconProps> = (props) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="7" height="7" x="3" y="3" rx="1"/>
+        <rect width="7" height="7" x="14" y="3" rx="1"/>
+        <rect width="7" height="7" x="14" y="14" rx="1"/>
+        <rect width="7" height="7" x="3" y="14" rx="1"/>
+    </svg>
+);

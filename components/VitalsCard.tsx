@@ -19,10 +19,8 @@ const VitalSignCompact: React.FC<{ label: string; value: string | number; unit: 
 );
 
 const VitalsCard: React.FC<VitalsCardProps> = ({ vitals, onAdd }) => {
-  // Sort vitals by date descending and take the last 5
-  const recentVitals = vitals.length > 0 
-    ? [...vitals].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5)
-    : [];
+  // Assuming vitals are pre-sorted with newest first. Take the last 5.
+  const recentVitals = vitals.slice(0, 5);
 
   const addButton = (
     <button onClick={onAdd} className="p-1 rounded-full text-brand-blue hover:bg-brand-blue-light" aria-label="Add new vitals reading">
@@ -33,7 +31,7 @@ const VitalsCard: React.FC<VitalsCardProps> = ({ vitals, onAdd }) => {
   return (
     <Card title="Vitals History (Last 5)" icon={<HeartPulseIcon className="w-6 h-6" />} action={addButton}>
       {recentVitals.length > 0 ? (
-        <div className="space-y-3 max-h-[280px] overflow-y-auto pr-2">
+        <div className="space-y-3 max-h-[320px] overflow-y-auto pr-2">
           {recentVitals.map((vital, index) => {
             const bpSystolic = parseInt(vital.bloodPressure.split('/')[0]);
             const isBpAbnormal = bpSystolic > 140 || bpSystolic < 90;
