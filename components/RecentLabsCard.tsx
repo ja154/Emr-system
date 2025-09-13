@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import type { LabResult } from '../types';
 import Card from './Card';
-import { BeakerIcon, PlusIcon, ArrowUpDownIcon } from './icons';
+import { BeakerIcon, PlusIcon, ArrowUpDownIcon, TrashIcon } from './icons';
 
 interface RecentLabsCardProps {
   labs: LabResult[];
   onAdd: () => void;
+  onRemove: (labId: string) => void;
 }
 
 const getStatusColor = (status: LabResult['status']) => {
@@ -16,7 +17,7 @@ const getStatusColor = (status: LabResult['status']) => {
     }
 }
 
-const RecentLabsCard: React.FC<RecentLabsCardProps> = ({ labs, onAdd }) => {
+const RecentLabsCard: React.FC<RecentLabsCardProps> = ({ labs, onAdd, onRemove }) => {
   const [sortOrder, setSortOrder] = useState<'date' | 'status'>('date');
 
   const sortedLabs = useMemo(() => {
@@ -79,6 +80,7 @@ const RecentLabsCard: React.FC<RecentLabsCardProps> = ({ labs, onAdd }) => {
                 <th scope="col" className="px-4 py-3 hidden sm:table-cell">Reference Range</th>
                 <th scope="col" className="px-4 py-3 hidden md:table-cell">Date</th>
                 <th scope="col" className="px-4 py-3">Status</th>
+                <th scope="col" className="px-4 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody>
@@ -92,6 +94,11 @@ const RecentLabsCard: React.FC<RecentLabsCardProps> = ({ labs, onAdd }) => {
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(lab.status)}`}>
                           {lab.status}
                       </span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button onClick={() => onRemove(lab.id)} className="p-1 rounded-full text-brand-gray-400 hover:text-red-600 hover:bg-red-100" aria-label={`Remove lab result for ${lab.testName}`}>
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}

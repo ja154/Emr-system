@@ -14,6 +14,7 @@ import AddLabResultModal from './components/AddLabResultModal';
 import AddMedicationModal from './components/AddMedicationModal';
 import AddClinicalNoteModal from './components/AddClinicalNoteModal';
 import AddAlertModal from './components/AddAlertModal';
+import ConfirmationModal from './components/ConfirmationModal';
 import { StethoscopeIcon, UserPlusIcon, ChevronRightIcon, SearchIcon, LayoutGridIcon, BeakerIcon, PillIcon, ClipboardTextIcon } from './components/icons';
 
 const APP_STORAGE_KEY = 'emr_patients_data';
@@ -96,6 +97,12 @@ const App: React.FC = () => {
   const [isAddMedicationModalOpen, setAddMedicationModalOpen] = useState(false);
   const [isAddNoteModalOpen, setAddNoteModalOpen] = useState(false);
   const [isAddAlertModalOpen, setAddAlertModalOpen] = useState(false);
+  const [confirmationState, setConfirmationState] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
   
   const handleSelectPatient = (patientId: string) => {
     setSelectedPatientId(patientId);
@@ -162,13 +169,88 @@ const App: React.FC = () => {
     }
   };
 
+  const handleCloseConfirmation = () => {
+    setConfirmationState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
+  };
+  
   const handleRemoveAlert = (alertToRemove: string) => {
     if (!selectedPatientId) return;
     const currentPatient = patients.find(p => p.id === selectedPatientId);
     if (currentPatient) {
         updatePatientData(selectedPatientId, { alerts: currentPatient.alerts.filter(a => a !== alertToRemove) });
     }
+    handleCloseConfirmation();
   };
+
+  const requestRemoveAlert = (alert: string) => {
+    setConfirmationState({
+        isOpen: true,
+        title: 'Confirm Deletion',
+        message: `Are you sure you want to delete the alert "${alert}"? This action cannot be undone.`,
+        onConfirm: () => handleRemoveAlert(alert),
+    });
+  };
+
+  const handleRemoveLabResult = (labId: string) => {
+    if (!selectedPatientId) return;
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { labs: currentPatient.labs.filter(l => l.id !== labId) });
+    }
+    handleCloseConfirmation();
+  };
+
+  const requestRemoveLabResult = (labId: string) => {
+    const lab = selectedPatient?.labs.find(l => l.id === labId);
+    if (!lab) return;
+    setConfirmationState({
+        isOpen: true,
+        title: 'Confirm Deletion',
+        message: `Are you sure you want to delete the lab result for "${lab.testName}" from ${new Date(lab.date).toLocaleDateString()}? This action cannot be undone.`,
+        onConfirm: () => handleRemoveLabResult(labId),
+    });
+  };
+
+  const handleRemoveMedication = (medId: string) => {
+    if (!selectedPatientId) return;
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { medications: currentPatient.medications.filter(m => m.id !== medId) });
+    }
+    handleCloseConfirmation();
+  };
+
+  const requestRemoveMedication = (medId: string) => {
+      const med = selectedPatient?.medications.find(m => m.id === medId);
+      if (!med) return;
+      setConfirmationState({
+          isOpen: true,
+          title: 'Confirm Deletion',
+          message: `Are you sure you want to delete the medication "${med.name} ${med.dosage}"? This action cannot be undone.`,
+          onConfirm: () => handleRemoveMedication(medId),
+      });
+  };
+
+  const handleRemoveClinicalNote = (noteId: string) => {
+    if (!selectedPatientId) return;
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { notes: currentPatient.notes.filter(n => n.id !== noteId) });
+    }
+    handleCloseConfirmation();
+  };
+
+  const requestRemoveClinicalNote = (noteId: string) => {
+    const note = selectedPatient?.notes.find(n => n.id === noteId);
+    if (!note) return;
+    setConfirmationState({
+        isOpen: true,
+        title: 'Confirm Deletion',
+        message: `Are you sure you want to delete the clinical note from ${note.date} by ${note.author}? This action cannot be undone.`,
+        onConfirm: () => handleRemoveClinicalNote(noteId),
+    });
+  };
+
 
   const selectedPatient = patients.find(p => p.id === selectedPatientId);
   
@@ -223,12 +305,12 @@ const App: React.FC = () => {
                                 {activeTab === 'overview' && (
                                     <div role="tabpanel" className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                                         <VitalsCard vitals={selectedPatient.vitals} onAdd={() => setAddVitalsModalOpen(true)} />
-                                        <AlertsCard alerts={selectedPatient.alerts} onAdd={() => setAddAlertModalOpen(true)} onRemove={handleRemoveAlert}/>
+                                        <AlertsCard alerts={selectedPatient.alerts} onAdd={() => setAddAlertModalOpen(true)} onRemove={requestRemoveAlert}/>
                                     </div>
                                 )}
-                                {activeTab === 'labs' && <div role="tabpanel"><RecentLabsCard labs={selectedPatient.labs} onAdd={() => setAddLabModalOpen(true)} /></div>}
-                                {activeTab === 'medications' && <div role="tabpanel"><MedicationsCard medications={selectedPatient.medications} onAdd={() => setAddMedicationModalOpen(true)} /></div>}
-                                {activeTab === 'notes' && <div role="tabpanel"><ClinicalNotesCard notes={selectedPatient.notes} onAdd={() => setAddNoteModalOpen(true)} /></div>}
+                                {activeTab === 'labs' && <div role="tabpanel"><RecentLabsCard labs={selectedPatient.labs} onAdd={() => setAddLabModalOpen(true)} onRemove={requestRemoveLabResult} /></div>}
+                                {activeTab === 'medications' && <div role="tabpanel"><MedicationsCard medications={selectedPatient.medications} onAdd={() => setAddMedicationModalOpen(true)} onRemove={requestRemoveMedication} /></div>}
+                                {activeTab === 'notes' && <div role="tabpanel"><ClinicalNotesCard notes={selectedPatient.notes} onAdd={() => setAddNoteModalOpen(true)} onRemove={requestRemoveClinicalNote} /></div>}
                             </div>
                         </div>
                     </div>
@@ -282,6 +364,16 @@ const App: React.FC = () => {
             </div>
         )}
       </main>
+
+       <ConfirmationModal
+        isOpen={confirmationState.isOpen}
+        onClose={handleCloseConfirmation}
+        onConfirm={confirmationState.onConfirm}
+        title={confirmationState.title}
+        message={confirmationState.message}
+        variant="danger"
+        confirmText="Delete"
+      />
 
        <AddPatientModal 
         isOpen={isAddPatientModalOpen}
