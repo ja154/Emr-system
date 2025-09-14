@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import type { AiSummary } from '../types';
+// FIX: Import Patient type to correctly type the patientData prop.
+import type { AiSummary, Patient } from '../types';
 import { generateClinicalSummary } from '../services/geminiService';
 import Card from './Card';
 import { SparklesIcon, LightbulbIcon, CheckCircleIcon, AlertCircleIcon } from './icons';
 
 interface AiSummaryCardProps {
-  patientData: object;
+  // FIX: Change patientData prop type from generic 'object' to the specific 'Patient' type.
+  patientData: Patient;
 }
 
 const LOADING_MESSAGES = [

@@ -28,7 +28,7 @@ const ClinicalNotesCard: React.FC<ClinicalNotesCardProps> = ({ notes, onAdd, onR
               <div className="absolute left-[7px] top-5 h-full border-l-2 border-brand-gray-200"></div>
               <div className="flex justify-between items-start">
                 <div>
-                    <p className="text-sm font-semibold text-brand-gray-800">{note.date} - {note.specialty}</p>
+                    <p className="text-sm font-semibold text-brand-gray-800">{new Date(note.date + 'T00:00:00').toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} - {note.specialty}</p>
                     <p className="text-sm text-brand-gray-500">by {note.author}</p>
                     <p className="mt-1 text-sm text-brand-gray-600">{note.contentSnippet}</p>
                 </div>

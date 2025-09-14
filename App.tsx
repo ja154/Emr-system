@@ -60,6 +60,31 @@ const PatientCard: React.FC<{ patient: Patient; onSelect: () => void }> = ({ pat
   </div>
 );
 
+const EmptyDashboard: React.FC<{ onAddPatient: () => void }> = ({ onAddPatient }) => {
+    return (
+        <div className="text-center bg-white rounded-xl border-2 border-dashed border-brand-gray-200 p-12">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-brand-blue-light">
+                <StethoscopeIcon className="h-8 w-8 text-brand-blue" />
+            </div>
+            <h3 className="mt-4 text-xl font-semibold text-brand-gray-900">Welcome to the EMR Dashboard</h3>
+            <p className="mt-2 text-base text-brand-gray-500">
+                There are no patient records yet. Get started by adding your first patient.
+            </p>
+            <div className="mt-6">
+                <button
+                    type="button"
+                    onClick={onAddPatient}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-green text-white font-semibold rounded-lg shadow-sm hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green"
+                >
+                    <UserPlusIcon className="-ml-1 h-5 w-5" />
+                    Add New Patient
+                </button>
+            </div>
+        </div>
+    );
+};
+
+
 type Tab = 'overview' | 'labs' | 'medications' | 'notes';
 
 const App: React.FC = () => {
@@ -355,9 +380,15 @@ const App: React.FC = () => {
                           <PatientCard key={patient.id} patient={patient} onSelect={() => handleSelectPatient(patient.id)} />
                         ))
                     ) : (
-                        <div className="col-span-full text-center py-12">
-                            <p className="text-lg font-semibold text-brand-gray-700">No Patients Found</p>
-                            <p className="text-brand-gray-500 mt-1">No patients match your search query "{searchQuery}".</p>
+                        <div className="col-span-full">
+                           {searchQuery ? (
+                                <div className="text-center py-12">
+                                    <p className="text-lg font-semibold text-brand-gray-700">No Patients Found</p>
+                                    <p className="text-brand-gray-500 mt-1">No patients match your search query "{searchQuery}".</p>
+                                </div>
+                            ) : (
+                                <EmptyDashboard onAddPatient={() => setAddPatientModalOpen(true)} />
+                            )}
                         </div>
                     )}
                 </div>
