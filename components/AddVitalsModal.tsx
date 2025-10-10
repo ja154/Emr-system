@@ -38,8 +38,8 @@ const AddVitalsModal: React.FC<AddVitalsModalProps> = ({ isOpen, onClose, onAddV
     } else {
       const [systolic, diastolic] = formData.bloodPressure.split('/').map(Number);
       if (systolic <= diastolic) newErrors.bloodPressure = 'Systolic must be greater than diastolic.';
-      if (systolic < 50 || systolic > 300) newErrors.bloodPressure = 'Systolic pressure is out of range (50-300).';
-      if (diastolic < 30 || diastolic > 200) newErrors.bloodPressure = 'Diastolic pressure is out of range (30-200).';
+      if (systolic < 50 || systolic > 300) newErrors.bloodPressure = 'Systolic pressure is out of range (50-300 mmHg).';
+      if (diastolic < 30 || diastolic > 200) newErrors.bloodPressure = 'Diastolic pressure is out of range (30-200 mmHg).';
     }
 
     const hr = Number(formData.heartRate);
@@ -91,7 +91,7 @@ const AddVitalsModal: React.FC<AddVitalsModalProps> = ({ isOpen, onClose, onAddV
     <Modal isOpen={isOpen} onClose={onClose} title="Add Vitals Reading">
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div>
-          <label htmlFor="bloodPressure" className="block text-sm font-medium text-brand-gray-700">Blood Pressure (e.g., 120/80)</label>
+          <label htmlFor="bloodPressure" className="block text-sm font-medium text-brand-gray-700">Blood Pressure (mmHg)</label>
           <input type="text" name="bloodPressure" id="bloodPressure" required className={`${baseInputClass} ${errors.bloodPressure ? errorInputClass : ''}`} onChange={handleChange} value={formData.bloodPressure} placeholder="120/80" aria-invalid={!!errors.bloodPressure} aria-describedby="bp-error" />
            {errors.bloodPressure && <p id="bp-error" className="mt-1 text-sm text-red-600">{errors.bloodPressure}</p>}
         </div>
@@ -112,7 +112,7 @@ const AddVitalsModal: React.FC<AddVitalsModalProps> = ({ isOpen, onClose, onAddV
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="respiratoryRate" className="block text-sm font-medium text-brand-gray-700">Respiratory Rate</label>
+            <label htmlFor="respiratoryRate" className="block text-sm font-medium text-brand-gray-700">Respiratory Rate (breaths/min)</label>
             <input type="number" name="respiratoryRate" id="respiratoryRate" required className={`${baseInputClass} ${errors.respiratoryRate ? errorInputClass : ''}`} onChange={handleChange} value={formData.respiratoryRate} placeholder="16" aria-invalid={!!errors.respiratoryRate} aria-describedby="rr-error"/>
             {errors.respiratoryRate && <p id="rr-error" className="mt-1 text-sm text-red-600">{errors.respiratoryRate}</p>}
           </div>
