@@ -15,7 +15,9 @@ import AddMedicationModal from './components/AddMedicationModal';
 import AddClinicalNoteModal from './components/AddClinicalNoteModal';
 import AddAlertModal from './components/AddAlertModal';
 import ConfirmationModal from './components/ConfirmationModal';
-import { StethoscopeIcon, UserPlusIcon, ChevronRightIcon, SearchIcon, LayoutGridIcon, BeakerIcon, PillIcon, ClipboardTextIcon } from './components/icons';
+import ExportModal from './components/ExportModal';
+import { exportToCsv } from './utils';
+import { StethoscopeIcon, UserPlusIcon, ChevronRightIcon, SearchIcon, LayoutGridIcon, BeakerIcon, PillIcon, ClipboardTextIcon, DownloadIcon } from './components/icons';
 
 const APP_STORAGE_KEY = 'emr_patients_data';
 
@@ -127,6 +129,10 @@ const App: React.FC = () => {
     title: '',
     message: '',
     onConfirm: () => {},
+  });
+  const [exportModalState, setExportModalState] = useState<{ isOpen: boolean; target: 'all' | string | null }>({
+    isOpen: false,
+    target: null,
   });
   
   const handleSelectPatient = (patientId: string) => {
@@ -276,6 +282,86 @@ const App: React.FC = () => {
     });
   };
 
+  const handleExport = (options: { [key: string]: boolean }) => {
+    if (!exportModalState.target) return;
+
+    if (exportModalState.target === 'all') {
+      const dataToExport = patients.map(p => {
+        const row: { [key: string]: any } = {};
+        if (options.demographics) {
+          row['MRN'] = p.id;
+          row['Name'] = p.name;
+          row['Date of Birth'] = p.dateOfBirth;
+          row['Gender'] = p.gender;
+          row['National ID'] = p.nationalId;
+          row['NHIF Number'] = p.nhifNumber;
+        }
+        if (options.alerts) {
+          row['Alerts'] = p.alerts.join('; ');
+        }
+        return row;
+      }).filter(row => Object.keys(row).length > 0);
+
+      if (dataToExport.length > 0) {
+        exportToCsv(dataToExport, 'all_patients_summary.csv');
+      }
+    } else {
+      const patient = patients.find(p => p.id === exportModalState.target);
+      if (!patient) return;
+      const patientName = patient.name.replace(/\s+/g, '_').toLowerCase();
+
+      if (options.demographics) {
+        exportToCsv([{
+            'MRN': patient.id,
+            'Name': patient.name,
+            'Date of Birth': patient.dateOfBirth,
+            'Gender': patient.gender,
+            'National ID': patient.nationalId,
+            'NHIF Number': patient.nhifNumber,
+        }], `${patientName}_demographics.csv`);
+      }
+      if (options.alerts && patient.alerts.length > 0) {
+        exportToCsv(patient.alerts.map(a => ({'Alert': a})), `${patientName}_alerts.csv`);
+      }
+      if (options.vitals && patient.vitals.length > 0) {
+        exportToCsv(patient.vitals.map(v => ({
+            'Date': new Date(v.date).toLocaleString(),
+            'Blood Pressure (mmHg)': v.bloodPressure,
+            'Heart Rate (bpm)': v.heartRate,
+            'Temperature (°C)': v.temperature,
+            'Respiratory Rate (breaths/min)': v.respiratoryRate,
+            'Oxygen Saturation (%)': v.oxygenSaturation,
+        })), `${patientName}_vitals.csv`);
+      }
+      if (options.labs && patient.labs.length > 0) {
+         exportToCsv(patient.labs.map(l => ({
+            'Date': new Date(l.date).toLocaleDateString(),
+            'Test Name': l.testName,
+            'Result': l.result,
+            'Reference Range': l.referenceRange,
+            'Status': l.status,
+         })), `${patientName}_labs.csv`);
+      }
+      if (options.medications && patient.medications.length > 0) {
+        exportToCsv(patient.medications.map(m => ({
+            'Name': m.name,
+            'Dosage': m.dosage,
+            'Frequency': m.frequency,
+            'Duration': m.duration,
+        })), `${patientName}_medications.csv`);
+      }
+      if (options.notes && patient.notes.length > 0) {
+        exportToCsv(patient.notes.map(n => ({
+            'Date': new Date(n.date + 'T00:00:00').toLocaleDateString(),
+            'Author': n.author,
+            'Specialty': n.specialty,
+            'Note': n.contentSnippet,
+        })), `${patientName}_notes.csv`);
+      }
+    }
+
+    setExportModalState({ isOpen: false, target: null });
+  };
 
   const selectedPatient = patients.find(p => p.id === selectedPatientId);
   
@@ -315,7 +401,11 @@ const App: React.FC = () => {
       <main className="max-w-screen-2xl mx-auto p-4 sm:p-6 lg:p-8">
         {selectedPatient ? (
             <>
-                <PatientHeader patient={selectedPatient} onBack={handleBackToDashboard} />
+                <PatientHeader 
+                    patient={selectedPatient} 
+                    onBack={handleBackToDashboard} 
+                    onExport={() => setExportModalState({ isOpen: true, target: selectedPatient.id })}
+                />
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 flex flex-col gap-6">
                         {/* Tabs */}
@@ -365,6 +455,13 @@ const App: React.FC = () => {
                                 aria-label="Search patients"
                             />
                         </div>
+                        <button
+                            onClick={() => setExportModalState({ isOpen: true, target: 'all' })}
+                            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-white border border-brand-gray-300 text-brand-gray-700 font-semibold rounded-lg shadow-sm hover:bg-brand-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue"
+                        >
+                            <DownloadIcon className="w-5 h-5" />
+                            Export All
+                        </button>
                         <button
                             onClick={() => setAddPatientModalOpen(true)}
                             className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-brand-green text-white font-semibold rounded-lg shadow-sm hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green"
@@ -441,6 +538,12 @@ const App: React.FC = () => {
             />
         </>
       )}
+      <ExportModal
+        isOpen={exportModalState.isOpen}
+        onClose={() => setExportModalState({ isOpen: false, target: null })}
+        onExport={handleExport}
+        target={exportModalState.target === 'all' ? 'all' : patients.find(p => p.id === exportModalState.target)}
+      />
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import React from 'react';
 import type { Patient } from '../types';
-import { AlertTriangleIcon, ChevronLeftIcon } from './icons';
+import { AlertTriangleIcon, ChevronLeftIcon, DownloadIcon } from './icons';
 
 interface PatientHeaderProps {
   patient: Patient;
   onBack?: () => void;
+  onExport?: () => void;
 }
 
 const calculateAge = (dob: string): number => {
@@ -18,7 +19,7 @@ const calculateAge = (dob: string): number => {
     return age;
 };
 
-const PatientHeader: React.FC<PatientHeaderProps> = ({ patient, onBack }) => {
+const PatientHeader: React.FC<PatientHeaderProps> = ({ patient, onBack, onExport }) => {
   return (
     <div>
        {onBack && (
@@ -52,6 +53,14 @@ const PatientHeader: React.FC<PatientHeaderProps> = ({ patient, onBack }) => {
                <span className="hidden sm:inline text-brand-gray-300">|</span>
                <span>NHIF No: {patient.nhifNumber}</span>
             </div>
+          </div>
+           <div className="self-start sm:self-center">
+             {onExport && (
+              <button onClick={onExport} className="flex items-center gap-2 px-4 py-2 bg-white border border-brand-gray-300 text-brand-gray-700 font-semibold rounded-lg shadow-sm hover:bg-brand-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue text-sm">
+                  <DownloadIcon className="w-5 h-5" />
+                  Export Record
+              </button>
+            )}
           </div>
         </div>
         {patient.alerts && patient.alerts.length > 0 && (
