@@ -32,6 +32,13 @@ export interface ClinicalNote {
   contentSnippet: string;
 }
 
+export interface Reminder {
+    id: string;
+    title: string;
+    dueDate: string;
+    status: 'pending' | 'completed';
+}
+
 export interface AiSummary {
     summary: string;
     keyConcerns: string[];
@@ -51,4 +58,5 @@ export interface Patient {
   labs: LabResult[];
   medications: Medication[];
   notes: ClinicalNote[];
+  reminders: Reminder[];
 }

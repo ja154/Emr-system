@@ -13,8 +13,8 @@ interface ExportModalProps {
 const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, target }) => {
   const isAllPatients = target === 'all';
   
-  // FIX: Add explicit type to useMemo to ensure correct type inference for EXPORT_OPTIONS_CONFIG.
-  const EXPORT_OPTIONS_CONFIG = useMemo<{ [key: string]: { label: string; defaultChecked: boolean } }>(() => (isAllPatients
+  // Fix: Explicitly type the constant to ensure correct type inference for EXPORT_OPTIONS_CONFIG.
+  const EXPORT_OPTIONS_CONFIG: { [key: string]: { label: string; defaultChecked: boolean } } = useMemo(() => (isAllPatients
     ? {
         demographics: { label: 'Patient Demographics', defaultChecked: true },
         alerts: { label: 'Active Alerts', defaultChecked: true },

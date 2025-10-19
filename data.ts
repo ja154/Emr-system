@@ -41,6 +41,11 @@ export const MOCK_PATIENTS: Patient[] = [
         { id: 'note1', date: '2024-08-15', author: 'Dr. John Carter', specialty: 'Cardiology', contentSnippet: 'Patient presents for routine follow-up for hypertension and type 2 diabetes. BP remains elevated...' },
         { id: 'note2', date: '2024-05-10', author: 'Dr. Susan Lewis', specialty: 'Endocrinology', contentSnippet: 'Reviewed A1c results. Discussed importance of diet and medication adherence.' },
     ],
+    reminders: [
+        { id: 'rem1', title: 'Follow-up appointment', dueDate: '2024-09-15', status: 'pending' },
+        { id: 'rem2', title: 'Medication refill (Lisinopril)', dueDate: '2024-08-30', status: 'pending' },
+        { id: 'rem3', title: 'Check fasting blood sugar', dueDate: '2024-08-22', status: 'completed' },
+    ],
   },
   {
     id: 'MRN0012346',
@@ -71,5 +76,8 @@ export const MOCK_PATIENTS: Patient[] = [
     notes: [
         { id: 'note3', date: '2024-07-01', author: 'Dr. Peter Benton', specialty: 'General Practice', contentSnippet: 'Annual physical. Patient reports good control of asthma. Lungs clear to auscultation.' },
     ],
+    reminders: [
+        { id: 'rem4', title: 'Annual physical due', dueDate: '2025-07-01', status: 'pending' },
+    ]
   },
 ];

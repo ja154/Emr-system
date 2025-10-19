@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { Patient, Vitals, LabResult, Medication, ClinicalNote } from './types';
+import type { Patient, Vitals, LabResult, Medication, ClinicalNote, Reminder } from './types';
 import { MOCK_PATIENTS } from './data';
 import PatientHeader from './components/PatientHeader';
 import VitalsCard from './components/VitalsCard';
@@ -8,12 +8,14 @@ import MedicationsCard from './components/MedicationsCard';
 import ClinicalNotesCard from './components/ClinicalNotesCard';
 import AiSummaryCard from './components/AiSummaryCard';
 import AlertsCard from './components/AlertsCard';
+import RemindersCard from './components/RemindersCard';
 import AddPatientModal from './components/AddPatientModal';
 import AddVitalsModal from './components/AddVitalsModal';
 import AddLabResultModal from './components/AddLabResultModal';
 import AddMedicationModal from './components/AddMedicationModal';
 import AddClinicalNoteModal from './components/AddClinicalNoteModal';
 import AddAlertModal from './components/AddAlertModal';
+import AddReminderModal from './components/AddReminderModal';
 import ConfirmationModal from './components/ConfirmationModal';
 import ExportModal from './components/ExportModal';
 import { exportToCsv } from './utils';
@@ -124,6 +126,7 @@ const App: React.FC = () => {
   const [isAddMedicationModalOpen, setAddMedicationModalOpen] = useState(false);
   const [isAddNoteModalOpen, setAddNoteModalOpen] = useState(false);
   const [isAddAlertModalOpen, setAddAlertModalOpen] = useState(false);
+  const [isAddReminderModalOpen, setAddReminderModalOpen] = useState(false);
   const [confirmationState, setConfirmationState] = useState({
     isOpen: false,
     title: '',
@@ -199,6 +202,27 @@ const App: React.FC = () => {
         updatePatientData(selectedPatientId, { alerts: [...currentPatient.alerts, alert] });
     }
   };
+
+  const handleAddReminder = (reminderData: Omit<Reminder, 'id' | 'status'>) => {
+    if (!selectedPatientId) return;
+    const newReminder: Reminder = { ...reminderData, id: `rem${Date.now()}`, status: 'pending' };
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { reminders: [newReminder, ...currentPatient.reminders] });
+    }
+  };
+
+  const handleToggleReminderStatus = (reminderId: string) => {
+    if (!selectedPatientId) return;
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        const updatedReminders = currentPatient.reminders.map(r => 
+            r.id === reminderId ? { ...r, status: r.status === 'pending' ? 'completed' : 'pending' } : r
+        );
+        updatePatientData(selectedPatientId, { reminders: updatedReminders });
+    }
+  };
+
 
   const handleCloseConfirmation = () => {
     setConfirmationState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
@@ -279,6 +303,26 @@ const App: React.FC = () => {
         title: 'Confirm Deletion',
         message: `Are you sure you want to delete the clinical note from ${note.date} by ${note.author}? This action cannot be undone.`,
         onConfirm: () => handleRemoveClinicalNote(noteId),
+    });
+  };
+
+  const handleRemoveReminder = (reminderId: string) => {
+    if (!selectedPatientId) return;
+    const currentPatient = patients.find(p => p.id === selectedPatientId);
+    if (currentPatient) {
+        updatePatientData(selectedPatientId, { reminders: currentPatient.reminders.filter(r => r.id !== reminderId) });
+    }
+    handleCloseConfirmation();
+  };
+
+  const requestRemoveReminder = (reminderId: string) => {
+    const reminder = selectedPatient?.reminders.find(r => r.id === reminderId);
+    if (!reminder) return;
+    setConfirmationState({
+        isOpen: true,
+        title: 'Confirm Deletion',
+        message: `Are you sure you want to delete the reminder "${reminder.title}"? This action cannot be undone.`,
+        onConfirm: () => handleRemoveReminder(reminderId),
     });
   };
 
@@ -421,6 +465,14 @@ const App: React.FC = () => {
                                     <div role="tabpanel" className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                                         <VitalsCard vitals={selectedPatient.vitals} onAdd={() => setAddVitalsModalOpen(true)} />
                                         <AlertsCard alerts={selectedPatient.alerts} onAdd={() => setAddAlertModalOpen(true)} onRemove={requestRemoveAlert}/>
+                                        <div className="xl:col-span-2">
+                                          <RemindersCard 
+                                            reminders={selectedPatient.reminders} 
+                                            onAdd={() => setAddReminderModalOpen(true)}
+                                            onRemove={requestRemoveReminder}
+                                            onToggleStatus={handleToggleReminderStatus}
+                                          />
+                                        </div>
                                     </div>
                                 )}
                                 {activeTab === 'labs' && <div role="tabpanel"><RecentLabsCard labs={selectedPatient.labs} onAdd={() => setAddLabModalOpen(true)} onRemove={requestRemoveLabResult} /></div>}
@@ -535,6 +587,11 @@ const App: React.FC = () => {
                 isOpen={isAddAlertModalOpen}
                 onClose={() => setAddAlertModalOpen(false)}
                 onAddAlert={handleAddAlert}
+            />
+            <AddReminderModal
+                isOpen={isAddReminderModalOpen}
+                onClose={() => setAddReminderModalOpen(false)}
+                onAddReminder={handleAddReminder}
             />
         </>
       )}
