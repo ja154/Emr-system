@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { ClinicalNote } from '../types';
 import Modal from './Modal';
 import DatePicker from './DatePicker';
+import { HistoryIcon } from './icons';
 
 interface AddClinicalNoteModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddClinicalNote: (note: Omit<ClinicalNote, 'id' | 'author'>) => void;
+  patientId: string;
 }
 
-const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onClose, onAddClinicalNote }) => {
+const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onClose, onAddClinicalNote, patientId }) => {
+  const DRAFT_KEY = `emr_note_draft_${patientId}`;
+  
   const initialFormData = {
     specialty: '',
     contentSnippet: '',
@@ -18,13 +22,59 @@ const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onC
 
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [savedDraft, setSavedDraft] = useState<typeof initialFormData | null>(null);
 
+  // Auto-save draft to localStorage with debouncing
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Do not save an empty note
+    if (!formData.contentSnippet?.trim() && !formData.specialty?.trim()) {
+        return;
+    }
+
+    const handler = setTimeout(() => {
+        try {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+        } catch (e) {
+            console.error("Could not save note draft", e);
+        }
+    }, 1500); // debounce save by 1.5s
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [formData, isOpen, DRAFT_KEY]);
+
+  // Check for a saved draft when the modal opens
   useEffect(() => {
     if (isOpen) {
-      setFormData(initialFormData);
-      setErrors({});
+      try {
+        const draftJson = localStorage.getItem(DRAFT_KEY);
+        if (draftJson) {
+          const parsedDraft = JSON.parse(draftJson);
+          // Only show prompt if there is content to restore
+          if (parsedDraft.contentSnippet?.trim() || parsedDraft.specialty?.trim()) {
+             setSavedDraft(parsedDraft);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to read note draft from localStorage", e);
+        setSavedDraft(null);
+      } finally {
+        // Always reset form to initial state; user can choose to restore
+        setFormData(initialFormData);
+        setErrors({});
+      }
+    } else {
+      // Clean up draft prompt when modal is not open
+      setSavedDraft(null);
     }
-  }, [isOpen]);
+  }, [isOpen, DRAFT_KEY]);
+
+  const clearDraft = useCallback(() => {
+    localStorage.removeItem(DRAFT_KEY);
+  }, [DRAFT_KEY]);
 
   const validate = (): boolean => {
     const newErrors: { [key: string]: string } = {};
@@ -60,8 +110,21 @@ const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onC
     e.preventDefault();
     if (validate()) {
       onAddClinicalNote(formData);
+      clearDraft();
       onClose();
     }
+  };
+
+  const handleRestoreDraft = () => {
+    if(savedDraft) {
+        setFormData(savedDraft);
+    }
+    setSavedDraft(null); // Hide prompt after restoring
+  };
+
+  const handleDiscardDraft = () => {
+    clearDraft();
+    setSavedDraft(null);
   };
 
   const baseInputClass = "mt-1 block w-full px-3 py-2 bg-white border border-brand-gray-300 rounded-md shadow-sm placeholder-brand-gray-400 focus:outline-none focus:ring-brand-blue focus:border-brand-blue sm:text-sm";
@@ -69,6 +132,25 @@ const AddClinicalNoteModal: React.FC<AddClinicalNoteModalProps> = ({ isOpen, onC
   
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Add Clinical Note">
+      {savedDraft && (
+        <div className="p-3 mb-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-md">
+            <div className="flex">
+                <div className="flex-shrink-0">
+                    <HistoryIcon className="h-5 w-5 text-yellow-500" aria-hidden="true" />
+                </div>
+                <div className="ml-3">
+                    <p className="text-sm font-semibold text-yellow-800">Unsaved Draft Found</p>
+                    <p className="mt-1 text-sm text-yellow-700">
+                        Would you like to restore your previous work?
+                    </p>
+                    <div className="mt-2">
+                        <button type="button" onClick={handleRestoreDraft} className="font-semibold text-brand-blue hover:underline text-sm mr-4">Restore Draft</button>
+                        <button type="button" onClick={handleDiscardDraft} className="font-semibold text-brand-gray-600 hover:underline text-sm">Discard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div className="grid grid-cols-2 gap-4">
             <div>

@@ -19,7 +19,7 @@ import AddAlertModal from './components/AddAlertModal';
 import AddReminderModal from './components/AddReminderModal';
 import ConfirmationModal from './components/ConfirmationModal';
 import ExportModal from './components/ExportModal';
-import { exportToCsv } from './utils';
+import { exportToCsv, exportToPdf } from './utils';
 import { StethoscopeIcon, UserPlusIcon, ChevronRightIcon, SearchIcon, LayoutGridIcon, BeakerIcon, PillIcon, ClipboardTextIcon, DownloadIcon } from './components/icons';
 
 const APP_STORAGE_KEY = 'emr_patients_data';
@@ -155,7 +155,14 @@ const App: React.FC = () => {
   const handleAddNewPatient = (newPatientData: Omit<Patient, 'id'>) => {
     const newPatient: Patient = {
         id: `MRN${String(Date.now()).slice(-7)}`,
-        ...newPatientData
+        ...newPatientData,
+        vitals: [],
+        labs: [],
+        medications: [],
+        notes: [],
+        alerts: [],
+        reminders: [],
+        timeline: [],
     };
     setPatients(prev => [...prev, newPatient]);
   };
@@ -302,7 +309,7 @@ const App: React.FC = () => {
     setConfirmationState({
         isOpen: true,
         title: 'Confirm Deletion',
-        message: `Are you sure you want to delete the clinical note from ${note.date} by ${note.author}? This action cannot be undone.`,
+        message: `Are you sure you want to delete the clinical note from ${new Date(note.date + 'T00:00:00').toLocaleDateString()} by ${note.author}? This action cannot be undone.`,
         onConfirm: () => handleRemoveClinicalNote(noteId),
     });
   };
@@ -327,81 +334,99 @@ const App: React.FC = () => {
     });
   };
 
-  const handleExport = (options: { [key: string]: boolean }) => {
+  const handleExport = (options: { [key: string]: boolean }, format: 'csv' | 'pdf') => {
     if (!exportModalState.target) return;
 
-    if (exportModalState.target === 'all') {
-      const dataToExport = patients.map(p => {
-        const row: { [key: string]: any } = {};
+    if (format === 'pdf') {
+        const target = exportModalState.target;
+        const patientName = target === 'all'
+            ? 'all_patients'
+            : patients.find(p => p.id === target)?.name.replace(/\s+/g, '_').toLowerCase() || 'patient';
+        
+        const filename = `${patientName}_record.pdf`;
+
+        if (target === 'all') {
+            exportToPdf('all', patients, options, filename);
+        } else {
+            const patient = patients.find(p => p.id === target);
+            if (patient) {
+                exportToPdf(patient, [], options, filename);
+            }
+        }
+    } else { // format === 'csv'
+      if (exportModalState.target === 'all') {
+        const dataToExport = patients.map(p => {
+          const row: { [key: string]: any } = {};
+          if (options.demographics) {
+            row['MRN'] = p.id;
+            row['Name'] = p.name;
+            row['Date of Birth'] = p.dateOfBirth;
+            row['Gender'] = p.gender;
+            row['National ID'] = p.nationalId;
+            row['NHIF Number'] = p.nhifNumber;
+          }
+          if (options.alerts) {
+            row['Alerts'] = p.alerts.join('; ');
+          }
+          return row;
+        }).filter(row => Object.keys(row).length > 0);
+
+        if (dataToExport.length > 0) {
+          exportToCsv(dataToExport, 'all_patients_summary.csv');
+        }
+      } else {
+        const patient = patients.find(p => p.id === exportModalState.target);
+        if (!patient) return;
+        const patientName = patient.name.replace(/\s+/g, '_').toLowerCase();
+
         if (options.demographics) {
-          row['MRN'] = p.id;
-          row['Name'] = p.name;
-          row['Date of Birth'] = p.dateOfBirth;
-          row['Gender'] = p.gender;
-          row['National ID'] = p.nationalId;
-          row['NHIF Number'] = p.nhifNumber;
+          exportToCsv([{
+              'MRN': patient.id,
+              'Name': patient.name,
+              'Date of Birth': patient.dateOfBirth,
+              'Gender': patient.gender,
+              'National ID': patient.nationalId,
+              'NHIF Number': patient.nhifNumber,
+          }], `${patientName}_demographics.csv`);
         }
-        if (options.alerts) {
-          row['Alerts'] = p.alerts.join('; ');
+        if (options.alerts && patient.alerts.length > 0) {
+          exportToCsv(patient.alerts.map(a => ({'Alert': a})), `${patientName}_alerts.csv`);
         }
-        return row;
-      }).filter(row => Object.keys(row).length > 0);
-
-      if (dataToExport.length > 0) {
-        exportToCsv(dataToExport, 'all_patients_summary.csv');
-      }
-    } else {
-      const patient = patients.find(p => p.id === exportModalState.target);
-      if (!patient) return;
-      const patientName = patient.name.replace(/\s+/g, '_').toLowerCase();
-
-      if (options.demographics) {
-        exportToCsv([{
-            'MRN': patient.id,
-            'Name': patient.name,
-            'Date of Birth': patient.dateOfBirth,
-            'Gender': patient.gender,
-            'National ID': patient.nationalId,
-            'NHIF Number': patient.nhifNumber,
-        }], `${patientName}_demographics.csv`);
-      }
-      if (options.alerts && patient.alerts.length > 0) {
-        exportToCsv(patient.alerts.map(a => ({'Alert': a})), `${patientName}_alerts.csv`);
-      }
-      if (options.vitals && patient.vitals.length > 0) {
-        exportToCsv(patient.vitals.map(v => ({
-            'Date': new Date(v.date).toLocaleString(),
-            'Blood Pressure (mmHg)': v.bloodPressure,
-            'Heart Rate (bpm)': v.heartRate,
-            'Temperature (°C)': v.temperature,
-            'Respiratory Rate (breaths/min)': v.respiratoryRate,
-            'Oxygen Saturation (%)': v.oxygenSaturation,
-        })), `${patientName}_vitals.csv`);
-      }
-      if (options.labs && patient.labs.length > 0) {
-         exportToCsv(patient.labs.map(l => ({
-            'Date': new Date(l.date).toLocaleDateString(),
-            'Test Name': l.testName,
-            'Result': l.result,
-            'Reference Range': l.referenceRange,
-            'Status': l.status,
-         })), `${patientName}_labs.csv`);
-      }
-      if (options.medications && patient.medications.length > 0) {
-        exportToCsv(patient.medications.map(m => ({
-            'Name': m.name,
-            'Dosage': m.dosage,
-            'Frequency': m.frequency,
-            'Duration': m.duration,
-        })), `${patientName}_medications.csv`);
-      }
-      if (options.notes && patient.notes.length > 0) {
-        exportToCsv(patient.notes.map(n => ({
-            'Date': new Date(n.date + 'T00:00:00').toLocaleDateString(),
-            'Author': n.author,
-            'Specialty': n.specialty,
-            'Note': n.contentSnippet,
-        })), `${patientName}_notes.csv`);
+        if (options.vitals && patient.vitals.length > 0) {
+          exportToCsv(patient.vitals.map(v => ({
+              'Date': new Date(v.date).toLocaleString(),
+              'Blood Pressure (mmHg)': v.bloodPressure,
+              'Heart Rate (bpm)': v.heartRate,
+              'Temperature (°C)': v.temperature,
+              'Respiratory Rate (breaths/min)': v.respiratoryRate,
+              'Oxygen Saturation (%)': v.oxygenSaturation,
+          })), `${patientName}_vitals.csv`);
+        }
+        if (options.labs && patient.labs.length > 0) {
+           exportToCsv(patient.labs.map(l => ({
+              'Date': new Date(l.date).toLocaleDateString(),
+              'Test Name': l.testName,
+              'Result': l.result,
+              'Reference Range': l.referenceRange,
+              'Status': l.status,
+           })), `${patientName}_labs.csv`);
+        }
+        if (options.medications && patient.medications.length > 0) {
+          exportToCsv(patient.medications.map(m => ({
+              'Name': m.name,
+              'Dosage': m.dosage,
+              'Frequency': m.frequency,
+              'Duration': m.duration,
+          })), `${patientName}_medications.csv`);
+        }
+        if (options.notes && patient.notes.length > 0) {
+          exportToCsv(patient.notes.map(n => ({
+              'Date': new Date(n.date + 'T00:00:00').toLocaleDateString(),
+              'Author': n.author,
+              'Specialty': n.specialty,
+              'Note': n.contentSnippet,
+          })), `${patientName}_notes.csv`);
+        }
       }
     }
 
@@ -586,6 +611,7 @@ const App: React.FC = () => {
                 isOpen={isAddNoteModalOpen}
                 onClose={() => setAddNoteModalOpen(false)}
                 onAddClinicalNote={handleAddClinicalNote}
+                patientId={selectedPatient.id}
             />
             <AddAlertModal
                 isOpen={isAddAlertModalOpen}

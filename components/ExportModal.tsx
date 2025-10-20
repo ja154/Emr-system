@@ -6,7 +6,7 @@ import { DownloadIcon } from './icons';
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onExport: (options: { [key: string]: boolean }) => void;
+  onExport: (options: { [key: string]: boolean }, format: 'csv' | 'pdf') => void;
   target: 'all' | Patient | null | undefined;
 }
 
@@ -35,6 +35,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
     }
     return initialOptions;
   });
+  
+  const [format, setFormat] = useState<'csv' | 'pdf'>('csv');
 
   useEffect(() => {
     if (isOpen) {
@@ -43,6 +45,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
             initialOptions[key] = EXPORT_OPTIONS_CONFIG[key as keyof typeof EXPORT_OPTIONS_CONFIG].defaultChecked;
         }
         setSelectedOptions(initialOptions);
+        setFormat('csv'); // Reset format on open
     }
   }, [isOpen, EXPORT_OPTIONS_CONFIG]);
 
@@ -60,7 +63,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
   };
 
   const handleSubmit = () => {
-    onExport(selectedOptions);
+    onExport(selectedOptions, format);
   };
 
   const patientName = target && target !== 'all' ? target.name : '';
@@ -69,7 +72,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div>
-        <p className="text-sm text-brand-gray-600 mb-4">Select the data sections you want to include in the CSV export.</p>
+        <p className="text-sm text-brand-gray-600 mb-4">Select the data sections to include in the export.</p>
         
         <div className="space-y-3">
           {Object.entries(EXPORT_OPTIONS_CONFIG).map(([key, { label }]) => (
@@ -90,6 +93,34 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
             <button type="button" onClick={() => handleSelectAll(false)} className="font-semibold text-brand-blue hover:underline">Deselect All</button>
         </div>
 
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-brand-gray-700 mb-2">Export Format</label>
+          <div className="flex items-center space-x-6 bg-brand-gray-100 p-2 rounded-lg w-min">
+            <label className={`flex items-center space-x-2 cursor-pointer px-3 py-1 rounded-md transition-all ${format === 'csv' ? 'bg-white shadow-sm' : ''}`}>
+              <input
+                type="radio"
+                name="export-format"
+                value="csv"
+                checked={format === 'csv'}
+                onChange={() => setFormat('csv')}
+                className="sr-only"
+              />
+              <span className={`text-sm font-semibold ${format === 'csv' ? 'text-brand-blue' : 'text-brand-gray-600'}`}>CSV</span>
+            </label>
+            <label className={`flex items-center space-x-2 cursor-pointer px-3 py-1 rounded-md transition-all ${format === 'pdf' ? 'bg-white shadow-sm' : ''}`}>
+              <input
+                type="radio"
+                name="export-format"
+                value="pdf"
+                checked={format === 'pdf'}
+                onChange={() => setFormat('pdf')}
+                className="sr-only"
+              />
+              <span className={`text-sm font-semibold ${format === 'pdf' ? 'text-brand-blue' : 'text-brand-gray-600'}`}>PDF</span>
+            </label>
+          </div>
+        </div>
+
         <div className="pt-6 mt-4 border-t border-brand-gray-200 flex justify-end gap-3">
           <button type="button" onClick={onClose} className="px-4 py-2 bg-white border border-brand-gray-300 rounded-md shadow-sm text-sm font-medium text-brand-gray-700 hover:bg-brand-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue">
             Cancel
@@ -101,7 +132,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
             className="inline-flex items-center gap-2 px-4 py-2 bg-brand-blue border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-brand-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue disabled:bg-brand-gray-300 disabled:cursor-not-allowed"
           >
             <DownloadIcon className="w-5 h-5"/>
-            Export CSV
+            Export {format.toUpperCase()}
           </button>
         </div>
       </div>
