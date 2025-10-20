@@ -45,6 +45,16 @@ export interface AiSummary {
     suggestedActions: string[];
 }
 
+export type TimelineEventType = 'Admission' | 'Diagnosis' | 'Surgery' | 'Discharge' | 'Medication' | 'Lab';
+
+export interface TimelineEvent {
+    id: string;
+    date: string;
+    eventType: TimelineEventType;
+    title: string;
+    description: string;
+}
+
 export interface Patient {
   id: string;
   name: string;
@@ -59,4 +69,5 @@ export interface Patient {
   medications: Medication[];
   notes: ClinicalNote[];
   reminders: Reminder[];
+  timeline: TimelineEvent[];
 }

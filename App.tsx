@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { Patient, Vitals, LabResult, Medication, ClinicalNote, Reminder } from './types';
+import type { Patient, Vitals, LabResult, Medication, ClinicalNote, Reminder, TimelineEvent } from './types';
 import { MOCK_PATIENTS } from './data';
 import PatientHeader from './components/PatientHeader';
 import VitalsCard from './components/VitalsCard';
@@ -9,6 +9,7 @@ import ClinicalNotesCard from './components/ClinicalNotesCard';
 import AiSummaryCard from './components/AiSummaryCard';
 import AlertsCard from './components/AlertsCard';
 import RemindersCard from './components/RemindersCard';
+import PatientTimelineCard from './components/PatientTimelineCard';
 import AddPatientModal from './components/AddPatientModal';
 import AddVitalsModal from './components/AddVitalsModal';
 import AddLabResultModal from './components/AddLabResultModal';
@@ -472,6 +473,9 @@ const App: React.FC = () => {
                                             onRemove={requestRemoveReminder}
                                             onToggleStatus={handleToggleReminderStatus}
                                           />
+                                        </div>
+                                        <div className="xl:col-span-2">
+                                          <PatientTimelineCard timeline={selectedPatient.timeline} />
                                         </div>
                                     </div>
                                 )}

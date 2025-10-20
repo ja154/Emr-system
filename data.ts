@@ -46,6 +46,12 @@ export const MOCK_PATIENTS: Patient[] = [
         { id: 'rem2', title: 'Medication refill (Lisinopril)', dueDate: '2024-08-30', status: 'pending' },
         { id: 'rem3', title: 'Check fasting blood sugar', dueDate: '2024-08-22', status: 'completed' },
     ],
+    timeline: [
+      { id: 'event1', date: '2024-08-15', eventType: 'Diagnosis', title: 'Diagnosed with Type 2 Diabetes', description: 'HbA1c of 7.8% confirmed diagnosis.' },
+      { id: 'event2', date: '2024-08-15', eventType: 'Medication', title: 'Started Metformin', description: 'Prescribed 500mg twice daily to manage blood glucose levels.' },
+      { id: 'event3', date: '2023-01-20', eventType: 'Diagnosis', title: 'Diagnosed with Hypertension', description: 'Consistently high blood pressure readings over several visits.' },
+      { id: 'event4', date: '2021-06-10', eventType: 'Surgery', title: 'Appendectomy', description: 'Emergency appendectomy performed at Nairobi Hospital.' },
+    ],
   },
   {
     id: 'MRN0012346',
@@ -78,6 +84,11 @@ export const MOCK_PATIENTS: Patient[] = [
     ],
     reminders: [
         { id: 'rem4', title: 'Annual physical due', dueDate: '2025-07-01', status: 'pending' },
-    ]
+    ],
+    timeline: [
+      { id: 'event5', date: '2024-07-01', eventType: 'Lab', title: 'Annual Blood Work', description: 'Cholesterol and TSH levels within normal range.' },
+      { id: 'event6', date: '2019-03-05', eventType: 'Admission', title: 'Hospital Admission for Asthma Exacerbation', description: 'Admitted for 2 days for severe asthma attack. Treated with nebulizers and steroids.' },
+      { id: 'event7', date: '2019-03-07', eventType: 'Discharge', title: 'Discharged from Hospital', description: 'Patient stable and discharged with updated asthma action plan.' },
+    ],
   },
 ];
