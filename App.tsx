@@ -38,29 +38,29 @@ const calculateAge = (dob: string): number => {
 const PatientCard: React.FC<{ patient: Patient; onSelect: () => void }> = ({ patient, onSelect }) => (
   <div
     onClick={onSelect}
-    className="bg-white rounded-xl shadow-sm border border-brand-gray-200 h-full flex flex-col cursor-pointer hover:shadow-md hover:border-brand-blue transition-all duration-200"
+    className="bg-white rounded-xl shadow-sm border border-brand-gray-200 h-full flex flex-col cursor-pointer hover:shadow-lg hover:border-brand-primary-300 transition-all duration-300 group"
     role="button"
     tabIndex={0}
     onKeyPress={(e) => e.key === 'Enter' && onSelect()}
     aria-label={`View record for ${patient.name}`}
   >
-    <div className="p-4 flex items-center space-x-4">
+    <div className="p-5 flex items-center space-x-4">
       <img
         src={patient.avatarUrl}
         alt={patient.name}
-        className="w-16 h-16 rounded-full border-2 border-brand-gray-100"
+        className="w-16 h-16 rounded-full ring-4 ring-brand-gray-100"
       />
       <div className="flex-grow">
-        <h3 className="text-lg font-bold text-brand-gray-900">{patient.name}</h3>
+        <h3 className="text-lg font-semibold text-brand-gray-800">{patient.name}</h3>
         <p className="text-sm text-brand-gray-500">
           {patient.gender}, {calculateAge(patient.dateOfBirth)} years
         </p>
         <p className="text-xs text-brand-gray-400 mt-1">MRN: {patient.id}</p>
       </div>
     </div>
-    <div className="mt-auto p-4 border-t border-brand-gray-100 flex justify-between items-center text-sm text-brand-blue font-semibold">
+    <div className="bg-brand-gray-50 rounded-b-xl mt-auto p-4 flex justify-between items-center text-sm text-brand-primary font-medium group-hover:text-brand-primary-dark transition-colors">
       <span>View Record</span>
-      <ChevronRightIcon className="w-5 h-5" />
+      <ChevronRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
     </div>
   </div>
 );
@@ -68,8 +68,8 @@ const PatientCard: React.FC<{ patient: Patient; onSelect: () => void }> = ({ pat
 const EmptyDashboard: React.FC<{ onAddPatient: () => void }> = ({ onAddPatient }) => {
     return (
         <div className="text-center bg-white rounded-xl border-2 border-dashed border-brand-gray-200 p-12">
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-brand-blue-light">
-                <StethoscopeIcon className="h-8 w-8 text-brand-blue" />
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-brand-primary-100">
+                <StethoscopeIcon className="h-8 w-8 text-brand-primary-600" />
             </div>
             <h3 className="mt-4 text-xl font-semibold text-brand-gray-900">Welcome to the EMR Dashboard</h3>
             <p className="mt-2 text-base text-brand-gray-500">
@@ -79,7 +79,7 @@ const EmptyDashboard: React.FC<{ onAddPatient: () => void }> = ({ onAddPatient }
                 <button
                     type="button"
                     onClick={onAddPatient}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-green text-white font-semibold rounded-lg shadow-sm hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-secondary-500 text-white font-semibold rounded-lg shadow-sm hover:bg-brand-secondary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-secondary-500"
                 >
                     <UserPlusIcon className="-ml-1 h-5 w-5" />
                     Add New Patient
@@ -442,10 +442,10 @@ const App: React.FC = () => {
   const TabButton: React.FC<{ tab: Tab, label: string, icon: React.ReactNode }> = ({ tab, label, icon }) => (
     <button
         onClick={() => setActiveTab(tab)}
-        className={`flex items-center gap-2 px-4 py-3 font-semibold text-sm transition-colors duration-200 ${
+        className={`flex items-center gap-2 px-3 py-2 font-medium text-sm transition-colors duration-200 rounded-lg ${
             activeTab === tab 
-            ? 'border-b-2 border-brand-blue text-brand-blue' 
-            : 'text-brand-gray-500 hover:text-brand-gray-800'
+            ? 'bg-brand-primary-100 text-brand-primary-700' 
+            : 'text-brand-gray-500 hover:text-brand-gray-900 hover:bg-brand-gray-100'
         }`}
         role="tab"
         aria-selected={activeTab === tab}
@@ -457,13 +457,13 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-brand-gray-50 text-brand-gray-800">
-      <header className="bg-white shadow-sm sticky top-0 z-20">
+      <header className="bg-white/80 backdrop-blur-lg border-b border-brand-gray-100 sticky top-0 z-20">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
            <div className="flex items-center space-x-3">
-             <div className="bg-brand-blue-light text-brand-blue-dark p-2 rounded-lg">
+             <div className="bg-brand-primary-100 text-brand-primary-600 p-2 rounded-lg">
                 <StethoscopeIcon className="w-6 h-6" />
              </div>
-             <h1 className="text-xl font-bold text-brand-gray-900">Kenya EMR Clinical Dashboard</h1>
+             <h1 className="text-xl font-semibold text-brand-gray-900">Kenya EMR Clinical Dashboard</h1>
            </div>
         </div>
       </header>
@@ -476,11 +476,11 @@ const App: React.FC = () => {
                     onBack={handleBackToDashboard} 
                     onExport={() => setExportModalState({ isOpen: true, target: selectedPatient.id })}
                 />
-                <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 flex flex-col gap-6">
+                <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 flex flex-col gap-8">
                         {/* Tabs */}
                         <div className="bg-white rounded-xl shadow-sm border border-brand-gray-200">
-                            <nav className="flex" role="tablist" aria-label="Patient data tabs">
+                            <nav className="flex p-2 space-x-2 border-b border-brand-gray-100" role="tablist" aria-label="Patient data tabs">
                                 <TabButton tab="overview" label="Overview" icon={<LayoutGridIcon className="w-5 h-5"/>} />
                                 <TabButton tab="labs" label="Labs" icon={<BeakerIcon className="w-5 h-5"/>} />
                                 <TabButton tab="medications" label="Medications" icon={<PillIcon className="w-5 h-5"/>} />
@@ -520,9 +520,9 @@ const App: React.FC = () => {
             </>
         ) : (
              <div>
-                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
-                    <h1 className="text-2xl font-bold text-brand-gray-900">Patient Dashboard</h1>
-                     <div className="flex gap-4 items-center">
+                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
+                    <h1 className="text-3xl font-bold text-brand-gray-900 tracking-tight">Patient Dashboard</h1>
+                     <div className="flex gap-3 items-center">
                         <div className="relative flex-grow md:flex-grow-0">
                             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                                 <SearchIcon className="w-5 h-5 text-brand-gray-400" />
@@ -532,20 +532,20 @@ const App: React.FC = () => {
                                 placeholder="Search by patient name..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full md:w-64 pl-10 pr-4 py-2 border border-brand-gray-300 rounded-lg focus:ring-brand-blue focus:border-brand-blue transition-all"
+                                className="w-full md:w-72 pl-10 pr-4 py-2.5 border border-brand-gray-300 rounded-lg focus:ring-brand-primary-500 focus:border-brand-primary-500 transition-all"
                                 aria-label="Search patients"
                             />
                         </div>
                         <button
                             onClick={() => setExportModalState({ isOpen: true, target: 'all' })}
-                            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-white border border-brand-gray-300 text-brand-gray-700 font-semibold rounded-lg shadow-sm hover:bg-brand-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue"
+                            className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-white border border-brand-gray-300 text-brand-gray-700 font-semibold rounded-lg shadow-sm hover:bg-brand-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary-500"
                         >
                             <DownloadIcon className="w-5 h-5" />
                             Export All
                         </button>
                         <button
                             onClick={() => setAddPatientModalOpen(true)}
-                            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-brand-green text-white font-semibold rounded-lg shadow-sm hover:bg-brand-green-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green"
+                            className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-brand-secondary-500 text-white font-semibold rounded-lg shadow-sm hover:bg-brand-secondary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-secondary-500"
                         >
                             <UserPlusIcon className="w-5 h-5" />
                             Add New Patient

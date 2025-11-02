@@ -12,7 +12,7 @@ interface VitalsCardProps {
 const VitalSignCompact: React.FC<{ label: string; value: string | number; unit: string; isAbnormal?: boolean }> = ({ label, value, unit, isAbnormal = false }) => (
   <div className="flex justify-between items-baseline text-sm">
     <span className="text-brand-gray-600">{label}</span>
-    <span className={`font-semibold ${isAbnormal ? 'text-red-600' : 'text-brand-gray-800'}`}>
+    <span className={`font-semibold ${isAbnormal ? 'text-brand-danger-600' : 'text-brand-gray-800'}`}>
       {value} <span className="text-xs font-normal text-brand-gray-500">{unit}</span>
     </span>
   </div>
@@ -23,7 +23,7 @@ const VitalsCard: React.FC<VitalsCardProps> = ({ vitals, onAdd }) => {
   const recentVitals = vitals.slice(0, 5);
 
   const addButton = (
-    <button onClick={onAdd} className="p-1 rounded-full text-brand-blue hover:bg-brand-blue-light" aria-label="Add new vitals reading">
+    <button onClick={onAdd} className="p-1 rounded-full text-brand-primary-500 hover:bg-brand-primary-100" aria-label="Add new vitals reading">
       <PlusIcon className="w-5 h-5" />
     </button>
   );
@@ -36,7 +36,7 @@ const VitalsCard: React.FC<VitalsCardProps> = ({ vitals, onAdd }) => {
             const bpSystolic = parseInt(vital.bloodPressure.split('/')[0]);
             const isBpAbnormal = bpSystolic > 140 || bpSystolic < 90;
             return (
-              <div key={index} className="p-3 rounded-lg bg-brand-gray-50 border border-brand-gray-200">
+              <div key={index} className="p-3 rounded-lg bg-brand-gray-50/80 border border-brand-gray-200/80">
                 <p className="text-xs font-semibold text-brand-gray-700 mb-2 pb-2 border-b border-brand-gray-200">
                   {new Date(vital.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
                 </p>

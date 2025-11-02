@@ -11,7 +11,7 @@ interface MedicationsCardProps {
 
 const MedicationsCard: React.FC<MedicationsCardProps> = ({ medications, onAdd, onRemove }) => {
   const addButton = (
-    <button onClick={onAdd} className="p-1 rounded-full text-brand-blue hover:bg-brand-blue-light" aria-label="Add new medication">
+    <button onClick={onAdd} className="p-1 rounded-full text-brand-primary-500 hover:bg-brand-primary-100" aria-label="Add new medication">
       <PlusIcon className="w-5 h-5" />
     </button>
   );
@@ -35,7 +35,7 @@ const MedicationsCard: React.FC<MedicationsCardProps> = ({ medications, onAdd, o
               <p className="text-brand-gray-600 text-center">{med.frequency}</p>
               <p className="text-brand-gray-600 text-right font-medium">{med.duration}</p>
               <div>
-                <button onClick={() => onRemove(med.id)} className="p-1 rounded-full text-brand-gray-400 hover:text-red-600 hover:bg-red-100" aria-label={`Remove medication ${med.name}`}>
+                <button onClick={() => onRemove(med.id)} className="p-1 rounded-full text-brand-gray-400 hover:text-brand-danger-600 hover:bg-brand-danger-100" aria-label={`Remove medication ${med.name}`}>
                   <TrashIcon className="w-4 h-4" />
                 </button>
               </div>

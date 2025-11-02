@@ -101,7 +101,7 @@ export function exportToPdf(target: 'all' | Patient, allPatients: Patient[], opt
                 head: head,
                 body: body,
                 theme: 'striped',
-                headStyles: { fillColor: [0, 82, 204] }, // brand-blue
+                headStyles: { fillColor: [14, 165, 233] }, // sky-500
             });
         }
 
@@ -168,7 +168,7 @@ export function exportToPdf(target: 'all' | Patient, allPatients: Patient[], opt
                     v.oxygenSaturation,
                 ]),
                 theme: 'striped',
-                headStyles: { fillColor: [0, 82, 204] },
+                headStyles: { fillColor: [14, 165, 233] },
             });
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -190,7 +190,7 @@ export function exportToPdf(target: 'all' | Patient, allPatients: Patient[], opt
                     l.status,
                 ]),
                 theme: 'striped',
-                headStyles: { fillColor: [0, 82, 204] },
+                headStyles: { fillColor: [14, 165, 233] },
             });
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -211,7 +211,7 @@ export function exportToPdf(target: 'all' | Patient, allPatients: Patient[], opt
                     m.duration,
                 ]),
                 theme: 'striped',
-                headStyles: { fillColor: [0, 82, 204] },
+                headStyles: { fillColor: [14, 165, 233] },
             });
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -232,7 +232,7 @@ export function exportToPdf(target: 'all' | Patient, allPatients: Patient[], opt
                     n.contentSnippet,
                 ]),
                 theme: 'striped',
-                headStyles: { fillColor: [0, 82, 204] },
+                headStyles: { fillColor: [14, 165, 233] },
                 columnStyles: { 3: { cellWidth: 'auto' } },
             });
         }

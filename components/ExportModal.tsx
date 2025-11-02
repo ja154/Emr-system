@@ -81,7 +81,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
                 type="checkbox"
                 checked={selectedOptions[key] || false}
                 onChange={() => handleToggleOption(key)}
-                className="h-5 w-5 rounded border-brand-gray-300 text-brand-blue focus:ring-brand-blue"
+                className="h-5 w-5 rounded border-brand-gray-300 text-brand-primary-600 focus:ring-brand-primary-500"
               />
               <span className="text-sm font-medium text-brand-gray-700">{label}</span>
             </label>
@@ -89,8 +89,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
         </div>
 
         <div className="mt-4 flex justify-between items-center text-sm">
-            <button type="button" onClick={() => handleSelectAll(true)} className="font-semibold text-brand-blue hover:underline">Select All</button>
-            <button type="button" onClick={() => handleSelectAll(false)} className="font-semibold text-brand-blue hover:underline">Deselect All</button>
+            <button type="button" onClick={() => handleSelectAll(true)} className="font-semibold text-brand-primary-600 hover:underline">Select All</button>
+            <button type="button" onClick={() => handleSelectAll(false)} className="font-semibold text-brand-primary-600 hover:underline">Deselect All</button>
         </div>
 
         <div className="mt-6">
@@ -105,7 +105,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
                 onChange={() => setFormat('csv')}
                 className="sr-only"
               />
-              <span className={`text-sm font-semibold ${format === 'csv' ? 'text-brand-blue' : 'text-brand-gray-600'}`}>CSV</span>
+              <span className={`text-sm font-semibold ${format === 'csv' ? 'text-brand-primary-600' : 'text-brand-gray-600'}`}>CSV</span>
             </label>
             <label className={`flex items-center space-x-2 cursor-pointer px-3 py-1 rounded-md transition-all ${format === 'pdf' ? 'bg-white shadow-sm' : ''}`}>
               <input
@@ -116,20 +116,20 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onExport, ta
                 onChange={() => setFormat('pdf')}
                 className="sr-only"
               />
-              <span className={`text-sm font-semibold ${format === 'pdf' ? 'text-brand-blue' : 'text-brand-gray-600'}`}>PDF</span>
+              <span className={`text-sm font-semibold ${format === 'pdf' ? 'text-brand-primary-600' : 'text-brand-gray-600'}`}>PDF</span>
             </label>
           </div>
         </div>
 
         <div className="pt-6 mt-4 border-t border-brand-gray-200 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="px-4 py-2 bg-white border border-brand-gray-300 rounded-md shadow-sm text-sm font-medium text-brand-gray-700 hover:bg-brand-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue">
+          <button type="button" onClick={onClose} className="px-4 py-2 bg-white border border-brand-gray-300 rounded-md shadow-sm text-sm font-medium text-brand-gray-700 hover:bg-brand-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary-500">
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSubmit}
             disabled={!Object.values(selectedOptions).some(v => v)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-brand-blue border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-brand-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue disabled:bg-brand-gray-300 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary-500 disabled:bg-brand-gray-300 disabled:cursor-not-allowed"
           >
             <DownloadIcon className="w-5 h-5"/>
             Export {format.toUpperCase()}

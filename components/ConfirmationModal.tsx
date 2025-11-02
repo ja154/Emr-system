@@ -24,8 +24,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   variant = 'primary',
 }) => {
   const confirmButtonClasses = {
-    danger: 'bg-red-600 hover:bg-red-700 focus:ring-red-500',
-    primary: 'bg-brand-blue hover:bg-brand-blue-dark focus:ring-brand-blue',
+    danger: 'bg-brand-danger-600 hover:bg-brand-danger-700 focus:ring-brand-danger-500',
+    primary: 'bg-brand-primary-600 hover:bg-brand-primary-700 focus:ring-brand-primary-500',
   };
 
   return (
@@ -33,8 +33,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       <div>
         <div className="sm:flex sm:items-start">
             {variant === 'danger' && (
-            <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                <AlertTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+            <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-brand-danger-100 sm:mx-0 sm:h-10 sm:w-10">
+                <AlertTriangleIcon className="h-6 w-6 text-brand-danger-600" aria-hidden="true" />
             </div>
             )}
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -53,7 +53,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             </button>
             <button
             type="button"
-            className="mt-3 w-full inline-flex justify-center rounded-md border border-brand-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-brand-gray-700 hover:bg-brand-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue sm:mt-0 sm:w-auto sm:text-sm"
+            className="mt-3 w-full inline-flex justify-center rounded-md border border-brand-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-brand-gray-700 hover:bg-brand-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary-500 sm:mt-0 sm:w-auto sm:text-sm"
             onClick={onClose}
             >
             {cancelText}

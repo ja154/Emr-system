@@ -11,9 +11,9 @@ interface RecentLabsCardProps {
 
 const getStatusColor = (status: LabResult['status']) => {
     switch (status) {
-        case 'Abnormal': return 'bg-yellow-100 text-yellow-800';
-        case 'Critical': return 'bg-red-100 text-red-800';
-        default: return 'bg-green-100 text-green-800';
+        case 'Abnormal': return 'bg-brand-warning-100 text-brand-warning-800';
+        case 'Critical': return 'bg-brand-danger-100 text-brand-danger-800';
+        default: return 'bg-brand-success-100 text-brand-success-800';
     }
 }
 
@@ -42,7 +42,7 @@ const RecentLabsCard: React.FC<RecentLabsCardProps> = ({ labs, onAdd, onRemove }
       <button
         onClick={() => setSortOrder(sortKey)}
         className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
-          isActive ? 'bg-brand-blue text-white shadow-sm' : 'text-brand-gray-600 hover:bg-brand-gray-100'
+          isActive ? 'bg-brand-primary-500 text-white shadow-sm' : 'text-brand-gray-600 hover:bg-brand-gray-100'
         }`}
         aria-pressed={isActive}
       >
@@ -62,7 +62,7 @@ const RecentLabsCard: React.FC<RecentLabsCardProps> = ({ labs, onAdd, onRemove }
         <SortButton sortKey="status" label="Status" />
       </div>
       <div className="h-6 w-px bg-brand-gray-200 mx-1"></div>
-      <button onClick={onAdd} className="p-1 rounded-full text-brand-blue hover:bg-brand-blue-light" aria-label="Add new lab result">
+      <button onClick={onAdd} className="p-1 rounded-full text-brand-primary-500 hover:bg-brand-primary-100" aria-label="Add new lab result">
         <PlusIcon className="w-5 h-5" />
       </button>
     </div>
@@ -87,7 +87,7 @@ const RecentLabsCard: React.FC<RecentLabsCardProps> = ({ labs, onAdd, onRemove }
               {sortedLabs.map((lab) => (
                 <tr key={lab.id} className="bg-white border-b hover:bg-brand-gray-50">
                   <td className="px-4 py-3 font-medium text-brand-gray-900 whitespace-nowrap">{lab.testName}</td>
-                  <td className={`px-4 py-3 font-semibold ${lab.status !== 'Normal' ? 'text-red-600' : 'text-brand-gray-800'}`}>{lab.result}</td>
+                  <td className={`px-4 py-3 font-semibold ${lab.status !== 'Normal' ? 'text-brand-danger-600' : 'text-brand-gray-800'}`}>{lab.result}</td>
                   <td className="px-4 py-3 hidden sm:table-cell">{lab.referenceRange}</td>
                   <td className="px-4 py-3 hidden md:table-cell">{new Date(lab.date).toLocaleDateString()}</td>
                   <td className="px-4 py-3">
@@ -96,7 +96,7 @@ const RecentLabsCard: React.FC<RecentLabsCardProps> = ({ labs, onAdd, onRemove }
                       </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => onRemove(lab.id)} className="p-1 rounded-full text-brand-gray-400 hover:text-red-600 hover:bg-red-100" aria-label={`Remove lab result for ${lab.testName}`}>
+                    <button onClick={() => onRemove(lab.id)} className="p-1 rounded-full text-brand-gray-400 hover:text-brand-danger-600 hover:bg-brand-danger-100" aria-label={`Remove lab result for ${lab.testName}`}>
                       <TrashIcon className="w-4 h-4" />
                     </button>
                   </td>

@@ -31,10 +31,10 @@ const getEventColor = (eventType: TimelineEventType) => {
     switch(eventType) {
         case 'Admission': return 'bg-blue-500';
         case 'Diagnosis': return 'bg-purple-500';
-        case 'Surgery': return 'bg-red-500';
-        case 'Discharge': return 'bg-green-500';
-        case 'Medication': return 'bg-yellow-500';
-        case 'Lab': return 'bg-teal-500';
+        case 'Surgery': return 'bg-brand-danger-500';
+        case 'Discharge': return 'bg-brand-success-500';
+        case 'Medication': return 'bg-brand-warning-500';
+        case 'Lab': return 'bg-brand-secondary-500';
         default: return 'bg-brand-gray-500';
     }
 }

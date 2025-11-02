@@ -112,7 +112,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
     <Card title="AI Clinical Summary" icon={<SparklesIcon className="w-6 h-6" />}>
         {!summary && !isLoading && !error && (
             <div className="text-center flex flex-col items-center justify-center h-full min-h-[300px]">
-                <div className="bg-brand-blue-light text-brand-blue-dark rounded-full p-4">
+                <div className="bg-brand-primary-100 text-brand-primary-600 rounded-full p-4">
                     <SparklesIcon className="w-10 h-10" />
                 </div>
                 <p className="mt-4 text-brand-gray-600">Get an AI-powered summary of this patient's chart to quickly identify key issues.</p>
@@ -121,7 +121,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
         
         {isLoading && (
             <div className="flex flex-col items-center justify-center h-full min-h-[300px]">
-                <svg className="animate-spin h-10 w-10 text-brand-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin h-10 w-10 text-brand-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -130,10 +130,10 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
         )}
 
         {error && (
-            <div className="flex flex-col items-center justify-center h-full text-center p-4 bg-red-50 rounded-lg min-h-[300px]">
-                <AlertCircleIcon className="w-10 h-10 text-red-500" />
-                <p className="mt-2 font-semibold text-red-700">Failed to generate summary</p>
-                <p className="mt-1 text-sm text-red-600">{error}</p>
+            <div className="flex flex-col items-center justify-center h-full text-center p-4 bg-brand-danger-50 rounded-lg min-h-[300px]">
+                <AlertCircleIcon className="w-10 h-10 text-brand-danger-500" />
+                <p className="mt-2 font-semibold text-brand-danger-700">Failed to generate summary</p>
+                <p className="mt-1 text-sm text-brand-danger-600">{error}</p>
             </div>
         )}
       
@@ -145,7 +145,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
                 </div>
                 <div>
                     <h3 className="font-semibold text-brand-gray-700 flex items-center gap-2">
-                        <LightbulbIcon className="w-5 h-5 text-yellow-500" />
+                        <LightbulbIcon className="w-5 h-5 text-brand-warning-500" />
                         Key Concerns
                     </h3>
                     <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-brand-gray-600">
@@ -154,7 +154,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
                 </div>
                 <div>
                     <h3 className="font-semibold text-brand-gray-700 flex items-center gap-2">
-                        <CheckCircleIcon className="w-5 h-5 text-brand-green" />
+                        <CheckCircleIcon className="w-5 h-5 text-brand-success-500" />
                         Suggested Actions
                     </h3>
                     <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-brand-gray-600">
@@ -169,7 +169,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
                                 onClick={() => handleFeedback('helpful')}
                                 className={`p-2 rounded-full transition-colors duration-200 ${
                                     feedback === 'helpful'
-                                        ? 'bg-green-100 text-green-600'
+                                        ? 'bg-brand-success-100 text-brand-success-600'
                                         : 'text-brand-gray-400 hover:bg-brand-gray-100 hover:text-brand-gray-600'
                                 }`}
                                 aria-label="Mark summary as helpful"
@@ -181,7 +181,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
                                 onClick={() => handleFeedback('not_helpful')}
                                 className={`p-2 rounded-full transition-colors duration-200 ${
                                     feedback === 'not_helpful'
-                                        ? 'bg-red-100 text-red-600'
+                                        ? 'bg-brand-danger-100 text-brand-danger-600'
                                         : 'text-brand-gray-400 hover:bg-brand-gray-100 hover:text-brand-gray-600'
                                 }`}
                                 aria-label="Mark summary as not helpful"
@@ -192,7 +192,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
                         </div>
                     </div>
                     {showFeedbackConfirmation && (
-                        <p className="text-center text-sm text-green-600 mt-2">
+                        <p className="text-center text-sm text-brand-success-600 mt-2">
                             Thank you for your feedback!
                         </p>
                     )}
@@ -204,7 +204,7 @@ const AiSummaryCard: React.FC<AiSummaryCardProps> = ({ patientData }) => {
          <button
             onClick={handleGenerateSummary}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-brand-blue text-white font-semibold rounded-lg shadow-sm hover:bg-brand-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue disabled:bg-brand-gray-300 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-brand-primary-600 text-white font-semibold rounded-lg shadow-sm hover:bg-brand-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary-500 disabled:bg-brand-gray-300 disabled:cursor-not-allowed transition-colors"
             >
             <SparklesIcon className="w-5 h-5" />
             {isLoading ? 'Generating...' : (summary ? 'Regenerate Summary' : 'Generate Summary')}

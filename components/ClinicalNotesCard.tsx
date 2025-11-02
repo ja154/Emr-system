@@ -11,7 +11,7 @@ interface ClinicalNotesCardProps {
 
 const ClinicalNotesCard: React.FC<ClinicalNotesCardProps> = ({ notes, onAdd, onRemove }) => {
   const addButton = (
-    <button onClick={onAdd} className="p-1 rounded-full text-brand-blue hover:bg-brand-blue-light" aria-label="Add new clinical note">
+    <button onClick={onAdd} className="p-1 rounded-full text-brand-primary-500 hover:bg-brand-primary-100" aria-label="Add new clinical note">
       <PlusIcon className="w-5 h-5" />
     </button>
   );
@@ -22,7 +22,7 @@ const ClinicalNotesCard: React.FC<ClinicalNotesCardProps> = ({ notes, onAdd, onR
         {notes.length > 0 ? (
           notes.map((note) => (
             <div key={note.id} className="relative pl-8 group">
-              <div className="absolute left-0 top-1 flex items-center justify-center w-4 h-4 bg-brand-blue rounded-full">
+              <div className="absolute left-0 top-1 flex items-center justify-center w-4 h-4 bg-brand-primary-500 rounded-full">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
               </div>
               <div className="absolute left-[7px] top-5 h-full border-l-2 border-brand-gray-200"></div>
@@ -34,7 +34,7 @@ const ClinicalNotesCard: React.FC<ClinicalNotesCardProps> = ({ notes, onAdd, onR
                 </div>
                 <button 
                   onClick={() => onRemove(note.id)} 
-                  className="p-1 rounded-full text-brand-gray-400 hover:text-red-600 hover:bg-red-100 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="p-1 rounded-full text-brand-gray-400 hover:text-brand-danger-600 hover:bg-brand-danger-100 opacity-0 group-hover:opacity-100 transition-opacity"
                   aria-label={`Remove note from ${note.date}`}
                 >
                   <TrashIcon className="w-4 h-4" />

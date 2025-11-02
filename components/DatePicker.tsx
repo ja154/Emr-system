@@ -93,8 +93,8 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, id, name, inpu
                     type="button"
                     onClick={() => handleDayClick(day)}
                     className={`w-8 h-8 rounded-full text-sm flex items-center justify-center
-                      ${!selectedDate && today.getDate() === day && today.getMonth() === viewDate.getMonth() && today.getFullYear() === viewDate.getFullYear() ? 'text-brand-blue font-bold' : ''}
-                      ${selectedDate && selectedDate.getDate() === day && selectedDate.getMonth() === viewDate.getMonth() && selectedDate.getFullYear() === viewDate.getFullYear() ? 'bg-brand-blue text-white' : 'hover:bg-brand-gray-100'}
+                      ${!selectedDate && today.getDate() === day && today.getMonth() === viewDate.getMonth() && today.getFullYear() === viewDate.getFullYear() ? 'text-brand-primary-600 font-bold' : ''}
+                      ${selectedDate && selectedDate.getDate() === day && selectedDate.getMonth() === viewDate.getMonth() && selectedDate.getFullYear() === viewDate.getFullYear() ? 'bg-brand-primary-600 text-white' : 'hover:bg-brand-gray-100'}
                     `}
                   >
                     {day}

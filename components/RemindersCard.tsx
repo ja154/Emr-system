@@ -12,7 +12,7 @@ interface RemindersCardProps {
 
 const RemindersCard: React.FC<RemindersCardProps> = ({ reminders, onAdd, onRemove, onToggleStatus }) => {
   const addButton = (
-    <button onClick={onAdd} className="p-1 rounded-full text-brand-blue hover:bg-brand-blue-light" aria-label="Add new reminder">
+    <button onClick={onAdd} className="p-1 rounded-full text-brand-primary-500 hover:bg-brand-primary-100" aria-label="Add new reminder">
       <PlusIcon className="w-5 h-5" />
     </button>
   );
@@ -48,7 +48,7 @@ const RemindersCard: React.FC<RemindersCardProps> = ({ reminders, onAdd, onRemov
                   <CheckCircleIcon 
                     className={`w-6 h-6 transition-colors ${
                       isCompleted 
-                        ? 'text-brand-green' 
+                        ? 'text-brand-success-500' 
                         : 'text-brand-gray-300 hover:text-brand-gray-400'
                     }`}
                     fill={isCompleted ? 'currentColor' : 'none'}
@@ -62,14 +62,14 @@ const RemindersCard: React.FC<RemindersCardProps> = ({ reminders, onAdd, onRemov
                     isCompleted 
                       ? 'text-brand-gray-400' 
                       : isOverdue 
-                      ? 'text-red-600 font-semibold' 
+                      ? 'text-brand-danger-600 font-semibold' 
                       : 'text-brand-gray-500'
                   }`}>
                     Due: {dueDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                     {isOverdue && ' (Overdue)'}
                   </p>
                 </div>
-                <button onClick={() => onRemove(reminder.id)} className="p-1 rounded-full text-brand-gray-400 hover:text-red-600 hover:bg-red-100" aria-label={`Remove reminder: ${reminder.title}`}>
+                <button onClick={() => onRemove(reminder.id)} className="p-1 rounded-full text-brand-gray-400 hover:text-brand-danger-600 hover:bg-brand-danger-100" aria-label={`Remove reminder: ${reminder.title}`}>
                   <TrashIcon className="w-4 h-4" />
                 </button>
               </li>
